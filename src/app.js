@@ -19,12 +19,13 @@ export default function App() {
     [points]
   )
   const fft = useMemo(() => (radix ? new FFT(radix) : null), [radix])
+  const [fftData, setFFTData] = useState(null)
 
   return (
     <Wrapper>
       <InputCanvas onChange={setPoints} />
-      <FourierCanvas points={points} fft={fft} />
-      <OutputCanvas />
+      <FourierCanvas points={points} fft={fft} onChange={setFFTData} />
+      <OutputCanvas fftData={fftData} fft={fft} />
     </Wrapper>
   )
 }

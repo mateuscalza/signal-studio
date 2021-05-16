@@ -22,10 +22,10 @@ const green = 132
 const blue = 227
 const alpha = 255
 
-export default function FourierCanvas({ points, fft }) {
+export default function FourierCanvas({ points, fft, onChange }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
-  const fftData = useAsync(async () => {
+  const fftDataResult = useAsync(async () => {
     const length = points.length
     if (!length || !fft) {
       return null
@@ -33,11 +33,11 @@ export default function FourierCanvas({ points, fft }) {
     console.time('fft')
     const result = fft.forward(points, 'none')
     console.timeEnd('fft')
+    onChange(result)
     return result
-    // return []
   }, [points])
 
-  console.log('fftData', fftData)
+  console.log('fftData', fftDataResult)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -49,14 +49,14 @@ export default function FourierCanvas({ points, fft }) {
     context.fillStyle = '#1c1e1f'
     context.fillRect(0, 0, width, height)
 
-    if (!fftData.value) {
+    if (!fftDataResult.value) {
       return
     }
 
-    const fftResultAbsolute = fftData.value.re.map((real, index) =>
-      Math.sqrt(Math.pow(real, 2) + Math.pow(fftData.value.im[index], 2))
+    const fftResultAbsolute = fftDataResult.value.re.map((real, index) =>
+      Math.sqrt(Math.pow(real, 2) + Math.pow(fftDataResult.value.im[index], 2))
     )
-    console.log(fftData.value.re.length)
+    console.log(fftDataResult.value.re.length)
 
     const max = Math.max(...fftResultAbsolute)
     const canvasData = context.getImageData(0, 0, width, height)
@@ -72,10 +72,10 @@ export default function FourierCanvas({ points, fft }) {
     }
 
     context.putImageData(canvasData, 0, 0)
-  }, [canvasRef, width, height, fftData.value])
+  }, [canvasRef, width, height, fftDataResult.value])
 
-  if (fftData.error) {
-    return fftData.error.message
+  if (fftDataResult.error) {
+    return fftDataResult.error.message
   }
 
   return (

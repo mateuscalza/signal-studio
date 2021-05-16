@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { useMeasure } from 'react-use'
+import { useAsync, useMeasure } from 'react-use'
 
 const Wrapper = styled.div`
   position: relative;
@@ -14,18 +14,64 @@ const Wrapper = styled.div`
     left: 0;
   }
 `
+const red = 9
 
-export default function OutputCanvas() {
+const green = 132
+const blue = 227
+const alpha = 255
+
+export default function OutputCanvas({ fft, fftData }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
-  const [points, setPoints] = useState([])
+
+  const pointsResult = useAsync(async () => {
+    if (!fftData || !fft) {
+      return null
+    }
+    console.time('ifft')
+    const result = fft.inverse(fftData.re, fftData.im)
+    console.timeEnd('ifft')
+    return result
+  }, [fftData?.re, fftData?.im])
+  console.log('points', pointsResult)
 
   useEffect(() => {
     const canvas = canvasRef.current
+    const points = pointsResult.value || []
+    if (!width || !height || !canvas) {
+      return
+    }
+
     const context = canvas.getContext('2d')
     context.fillStyle = '#2d3436'
     context.fillRect(0, 0, width, height)
-  }, [canvasRef, width, height])
+
+    const canvasData = context.getImageData(0, 0, width, height)
+
+    let hasStarted = false
+    let last = undefined
+    for (let x = 0; x < points.length; x++) {
+      if (typeof points[x] === 'undefined' && !hasStarted) {
+        continue
+      }
+      hasStarted = true
+
+      const y = typeof points[x] !== 'undefined' ? points[x] : last
+      last = y
+      const index = (x + (height - y) * width) * 4
+
+      canvasData.data[index + 0] = red
+      canvasData.data[index + 1] = green
+      canvasData.data[index + 2] = blue
+      canvasData.data[index + 3] = alpha
+    }
+
+    context.putImageData(canvasData, 0, 0)
+  }, [canvasRef, width, height, pointsResult.value])
+
+  if (pointsResult.error) {
+    return pointsResult.error.message
+  }
 
   return (
     <Wrapper ref={wrapperRef}>
