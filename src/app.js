@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { Fft as FFT } from 'fili'
 import InputCanvas from './components/inputCanvas'
 import FourierCanvas from './components/fourierCanvas'
 import OutputCanvas from './components/outputCanvas'
+import findRadix from './utils/findRadix'
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,12 +14,16 @@ const Wrapper = styled.div`
 
 export default function App() {
   const [points, setPoints] = useState([])
-  console.log('points', points)
+  const radix = useMemo(
+    () => (points.length ? findRadix(points.length) : null),
+    [points]
+  )
+  const fft = useMemo(() => (radix ? new FFT(radix) : null), [radix])
 
   return (
     <Wrapper>
       <InputCanvas onChange={setPoints} />
-      <FourierCanvas points={points} />
+      <FourierCanvas points={points} fft={fft} />
       <OutputCanvas />
     </Wrapper>
   )

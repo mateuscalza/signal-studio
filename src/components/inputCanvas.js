@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useDebounce, useMeasure } from 'react-use'
 import styled from 'styled-components'
-import { useMeasure, useDebounce } from 'react-use'
 import fillMissing from '../utils/fillMissing'
 
 const Wrapper = styled.div`
@@ -76,7 +76,7 @@ export default function InputCanvas({ onChange }) {
       }
       handleClick(event)
     },
-    [height]
+    [handleClick]
   )
 
   return (
