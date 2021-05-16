@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 const red = 9
 const green = 132
 const blue = 227
-const alpha = 1
+const alpha = 255
 
 export default function InputCanvas() {
   const [wrapperRef, { width, height }] = useMeasure()
@@ -31,7 +31,6 @@ export default function InputCanvas() {
 
     const context = canvas.getContext('2d')
     context.fillStyle = '#2d3436'
-
     context.fillRect(0, 0, width, height)
 
     const canvasData = context.getImageData(0, 0, width, height)
