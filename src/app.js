@@ -25,7 +25,7 @@ export default function App() {
     <Wrapper>
       <InputCanvas onChange={setPoints} />
       <FourierCanvas points={points} fft={fft} onChange={setFFTData} />
-      <OutputCanvas fftData={fftData} fft={fft} />
+      <OutputCanvas fft={fft} real={fftData?.re} imaginary={fftData?.im} />
     </Wrapper>
   )
 }

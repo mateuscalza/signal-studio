@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  box-shadow: 0 -5px 10px rgb(9 132 227 / 30%), 0 5px 10px rgb(9 132 227 / 30%);
+  /* box-shadow: 0 -5px 10px rgb(9 132 227 / 30%), 0 5px 10px rgb(9 132 227 / 30%); */
   z-index: 1;
 
   canvas {
@@ -37,8 +37,6 @@ export default function FourierCanvas({ points, fft, onChange }) {
     return result
   }, [points])
 
-  console.log('fftData', fftDataResult)
-
   useEffect(() => {
     const canvas = canvasRef.current
     if (!width || !height || !canvas) {
@@ -56,12 +54,15 @@ export default function FourierCanvas({ points, fft, onChange }) {
     const fftResultAbsolute = fftDataResult.value.re.map((real, index) =>
       Math.sqrt(Math.pow(real, 2) + Math.pow(fftDataResult.value.im[index], 2))
     )
-    console.log(fftDataResult.value.re.length)
 
     const max = Math.max(...fftResultAbsolute)
     const canvasData = context.getImageData(0, 0, width, height)
 
-    for (let frequency = 0; frequency < fftResultAbsolute.length; frequency++) {
+    for (
+      let frequency = 0;
+      frequency < Math.min(fftResultAbsolute.length, width);
+      frequency++
+    ) {
       const y = Math.floor((1 - fftResultAbsolute[frequency] / max) * height)
       const index = (frequency + y * width) * 4
 

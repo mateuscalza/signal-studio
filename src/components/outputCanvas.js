@@ -20,19 +20,20 @@ const green = 132
 const blue = 227
 const alpha = 255
 
-export default function OutputCanvas({ fft, fftData }) {
+export default function OutputCanvas({ fft, real, imaginary }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
 
   const pointsResult = useAsync(async () => {
-    if (!fftData || !fft) {
+    console.log('!!!')
+    if (!real || !imaginary || !fft) {
       return null
     }
     console.time('ifft')
-    const result = fft.inverse(fftData.re, fftData.im)
+    const result = fft.inverse(real, imaginary)
     console.timeEnd('ifft')
     return result
-  }, [fftData?.re, fftData?.im])
+  }, [real, imaginary])
   console.log('points', pointsResult)
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function OutputCanvas({ fft, fftData }) {
 
     let hasStarted = false
     let last = undefined
-    for (let x = 0; x < points.length; x++) {
+    for (let x = 0; x < Math.min(points.length, width); x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
       }
