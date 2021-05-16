@@ -64,9 +64,6 @@ export default function InputCanvas({ onChange }) {
       canvasData.data[index + 3] = alpha
     }
 
-    const radix = findRadix(finalX - initialX)
-    console.log('radix', radix)
-
     context.putImageData(canvasData, 0, 0)
 
     context.beginPath()
@@ -74,6 +71,7 @@ export default function InputCanvas({ onChange }) {
     context.lineTo(initialX, height)
     context.stroke()
 
+    const radix = findRadix(finalX - initialX)
     context.beginPath()
     context.moveTo(initialX + radix, 0)
     context.lineTo(initialX + radix, height)

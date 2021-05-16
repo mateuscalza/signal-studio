@@ -25,16 +25,15 @@ export default function OutputCanvas({ fft, real, imaginary }) {
   const canvasRef = useRef(null)
 
   const pointsResult = useAsync(async () => {
-    console.log('!!!')
     if (!real || !imaginary || !fft) {
       return null
     }
     console.time('ifft')
     const result = fft.inverse(real, imaginary)
+    const immutableResult = Array.from(result)
     console.timeEnd('ifft')
-    return result
+    return immutableResult
   }, [real, imaginary])
-  console.log('points', pointsResult)
 
   useEffect(() => {
     const canvas = canvasRef.current

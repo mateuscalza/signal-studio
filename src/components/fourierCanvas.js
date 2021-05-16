@@ -32,9 +32,13 @@ export default function FourierCanvas({ points, fft, onChange }) {
     }
     console.time('fft')
     const result = fft.forward(points, 'none')
+    const immutableResult = {
+      im: Array.from(result.im),
+      re: Array.from(result.re),
+    }
     console.timeEnd('fft')
-    onChange(result)
-    return result
+    onChange(immutableResult)
+    return immutableResult
   }, [points])
 
   useEffect(() => {
