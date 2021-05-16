@@ -51,12 +51,20 @@ export default function InputCanvas() {
 
   const handleClick = useCallback(
     (event) => {
-      console.log('event', event.nativeEvent.offsetX, event.nativeEvent.offsetY)
       setPoints((oldPoints) => {
         const clone = Array.from(oldPoints)
         clone[event.nativeEvent.offsetX] = height - event.nativeEvent.offsetY
         return clone
       })
+    },
+    [height]
+  )
+  const handleMouseMove = useCallback(
+    (event) => {
+      if (event.buttons !== 1) {
+        return
+      }
+      handleClick(event)
     },
     [height]
   )
@@ -68,6 +76,7 @@ export default function InputCanvas() {
         width={width}
         height={height}
         onClick={handleClick}
+        onMouseMove={handleMouseMove}
       />
     </Wrapper>
   )
