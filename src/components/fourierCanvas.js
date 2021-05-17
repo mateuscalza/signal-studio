@@ -89,9 +89,6 @@ export default function FourierCanvas({ points, fft, onChange }) {
       re: real,
     }
 
-    console.log(immutableResult.im.length)
-    // immutableResult.im[100] = 1
-    // immutableResult.re[100] = 1
     console.timeEnd('fft')
     onChange(immutableResult)
     return immutableResult
