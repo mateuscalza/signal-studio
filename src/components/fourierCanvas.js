@@ -66,41 +66,23 @@ export default function FourierCanvas({ points, fft, onChange }) {
 
     const result = fft.forward(points, 'none')
 
-    const real = Array.from(result.re)
-    const imaginary = Array.from(result.im)
+    let real = Array.from(result.re)
+    let imaginary = Array.from(result.im)
 
     fftshift(real)
     fftshift(imaginary)
 
-    real[0] = 0
-    imaginary[0] = 0
+    const preserve = 0.01
+    const nToClear = Math.floor((real.length / 2) * (1 - preserve))
+    console.log('nToClear', nToClear)
+    const map = (value, index, list) =>
+      index < nToClear || list.length - index < nToClear ? 0 : value
 
-    real[1] = 0
-    imaginary[1] = 0
+    real = real.map(map)
+    imaginary = imaginary.map(map)
 
-    real[2] = 0
-    imaginary[2] = 0
-
-    real[3] = 0
-    imaginary[3] = 0
-
-    real[4] = 0
-    imaginary[4] = 0
-
-    real[508] = 0
-    imaginary[508] = 0
-
-    real[509] = 0
-    imaginary[509] = 0
-
-    real[510] = 0
-    imaginary[510] = 0
-
-    real[511] = 0
-    imaginary[511] = 0
-
-    // ifftshift(real)
-    // ifftshift(imaginary)
+    ifftshift(real)
+    ifftshift(imaginary)
 
     const immutableResult = {
       im: imaginary,
