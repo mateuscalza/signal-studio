@@ -1,6 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
+import { fftshift, ifftshift } from 'fftshift'
+import Fili from 'fili'
+
+// window.F = F
+// console.log({ fftshift, ifftshift })
 
 const Wrapper = styled.div`
   position: relative;
@@ -31,11 +36,80 @@ export default function FourierCanvas({ points, fft, onChange }) {
       return null
     }
     console.time('fft')
+
+    //  Instance of a filter coefficient calculator
+    // var iirCalculator = new Fili.CalcCascades()
+
+    // // get available filters
+    // var availableFilters = iirCalculator.available()
+
+    // // calculate filter coefficients
+    // var iirFilterCoeffs = iirCalculator.lowpass({
+    //   order: 3, // cascade 3 biquad filters (max: 12)
+    //   characteristic: 'butterworth',
+    //   Fs: 1000, // sampling frequency
+    //   Fc: 100, // cutoff frequency / center frequency for bandpass, bandstop, peak
+    //   BW: 1, // bandwidth only for bandstop and bandpass filters - optional
+    //   gain: 0, // gain for peak, lowshelf and highshelf
+    //   preGain: false, // adds one constant multiplication for highpass and lowpass
+    //   // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
+    // })
+
+    // // create a filter instance from the calculated coeffs
+    // var iirFilter = new Fili.IirFilter(iirFilterCoeffs)
+    // console.log(points)
+
+    // const filtered = iirFilter
+    //   .multiStep(points)
+    //   .map((value) => Math.max(value, 0))
+    // console.log(filtered)
+
     const result = fft.forward(points, 'none')
+
+    const real = Array.from(result.re)
+    const imaginary = Array.from(result.im)
+
+    fftshift(real)
+    fftshift(imaginary)
+
+    real[0] = 0
+    imaginary[0] = 0
+
+    real[1] = 0
+    imaginary[1] = 0
+
+    real[2] = 0
+    imaginary[2] = 0
+
+    real[3] = 0
+    imaginary[3] = 0
+
+    real[4] = 0
+    imaginary[4] = 0
+
+    real[508] = 0
+    imaginary[508] = 0
+
+    real[509] = 0
+    imaginary[509] = 0
+
+    real[510] = 0
+    imaginary[510] = 0
+
+    real[511] = 0
+    imaginary[511] = 0
+
+    // ifftshift(real)
+    // ifftshift(imaginary)
+
     const immutableResult = {
-      im: Array.from(result.im),
-      re: Array.from(result.re),
+      im: imaginary,
+      re: real,
     }
+
+    console.log(immutableResult.im.length)
+    // immutableResult.im[100] = 1
+    // immutableResult.re[100] = 1
     console.timeEnd('fft')
     onChange(immutableResult)
     return immutableResult

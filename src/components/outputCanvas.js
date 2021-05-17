@@ -31,6 +31,7 @@ export default function OutputCanvas({ fft, real, imaginary }) {
     console.time('ifft')
     const result = fft.inverse(real, imaginary)
     const immutableResult = Array.from(result)
+    console.log('immutableResult', immutableResult)
     console.timeEnd('ifft')
     return immutableResult
   }, [real, imaginary])
@@ -56,7 +57,7 @@ export default function OutputCanvas({ fft, real, imaginary }) {
       }
       hasStarted = true
 
-      const y = typeof points[x] !== 'undefined' ? points[x] : last
+      const y = typeof points[x] !== 'undefined' ? Math.floor(points[x]) : last
       last = y
       const index = (x + (height - y) * width) * 4
 
