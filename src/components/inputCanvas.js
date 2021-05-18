@@ -3,15 +3,21 @@ import { useDebounce, useMeasure } from 'react-use'
 import styled from 'styled-components'
 import fillMissing from '../utils/fillMissing'
 import findRadix from '../utils/findRadix'
+import padding from '../utils/padding'
 
 const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
+  background-color: #2c3e50;
 
   canvas {
     position: absolute;
+    top: ${padding.top}px;
+    left: ${padding.left}px;
+    background-color: #34495e;
+    box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
 
@@ -20,7 +26,7 @@ const green = 132
 const blue = 227
 const alpha = 255
 
-export default function InputCanvas({ onChange }) {
+export default function InputCanvas({ onChange, onChangeResolution }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
@@ -35,8 +41,6 @@ export default function InputCanvas({ onChange }) {
 
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, width, height)
-    context.fillStyle = '#2d3436'
-    context.fillRect(0, 0, width, height)
 
     const canvasData = context.getImageData(0, 0, width, height)
 
@@ -78,6 +82,13 @@ export default function InputCanvas({ onChange }) {
     context.stroke()
   }, [canvasRef, width, height, points])
 
+  useEffect(() => {
+    onChangeResolution({
+      x: width - padding.left - padding.right,
+      y: height - padding.top - padding.bottom,
+    })
+  }, [width, height])
+
   const handleClick = useCallback(
     (event) => {
       setPoints((oldPoints) => {
@@ -102,8 +113,8 @@ export default function InputCanvas({ onChange }) {
     <Wrapper ref={wrapperRef}>
       <canvas
         ref={canvasRef}
-        width={width}
-        height={height}
+        width={width - padding.left - padding.right}
+        height={height - padding.top - padding.bottom}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
       />

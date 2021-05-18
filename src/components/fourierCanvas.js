@@ -2,23 +2,22 @@ import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { fftshift, ifftshift } from 'fftshift'
-import Fili from 'fili'
-
-// window.F = F
-// console.log({ fftshift, ifftshift })
+import padding from '../utils/padding'
 
 const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
-  /* box-shadow: 0 -5px 10px rgb(9 132 227 / 30%), 0 5px 10px rgb(9 132 227 / 30%); */
+  background-color: #2c3e50;
   z-index: 1;
 
   canvas {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: ${padding.top}px;
+    left: ${padding.left}px;
+    background-color: #34495e;
+    box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
 
@@ -74,7 +73,6 @@ export default function FourierCanvas({ points, fft, onChange }) {
 
     const preserve = 0.01
     const nToClear = Math.floor((real.length / 2) * (1 - preserve))
-    console.log('nToClear', nToClear)
     const map = (value, index, list) =>
       index < nToClear || list.length - index < nToClear ? 0 : value
 
@@ -101,8 +99,7 @@ export default function FourierCanvas({ points, fft, onChange }) {
     }
 
     const context = canvas.getContext('2d')
-    context.fillStyle = '#1c1e1f'
-    context.fillRect(0, 0, width, height)
+    context.clearRect(0, 0, width, height)
 
     if (!fftDataResult.value) {
       return
@@ -138,7 +135,11 @@ export default function FourierCanvas({ points, fft, onChange }) {
 
   return (
     <Wrapper ref={wrapperRef}>
-      <canvas ref={canvasRef} width={width} height={height} />
+      <canvas
+        ref={canvasRef}
+        width={width - padding.left - padding.right}
+        height={height - padding.top - padding.bottom}
+      />
     </Wrapper>
   )
 }

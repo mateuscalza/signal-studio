@@ -5,6 +5,7 @@ import InputCanvas from './components/inputCanvas'
 import FourierCanvas from './components/fourierCanvas'
 import OutputCanvas from './components/outputCanvas'
 import findRadix from './utils/findRadix'
+import FourierClearRange from './components/fourierClearRange'
 
 const Wrapper = styled.div`
   display: flex;
@@ -14,6 +15,7 @@ const Wrapper = styled.div`
 
 export default function App() {
   const [points, setPoints] = useState([])
+  const [inputResolution, setInputResolution] = useState({ x: null, y: null })
   const radix = useMemo(
     () => (points.length ? findRadix(points.length) : null),
     [points]
@@ -23,9 +25,18 @@ export default function App() {
 
   return (
     <Wrapper>
-      <InputCanvas onChange={setPoints} />
+      <InputCanvas
+        onChange={setPoints}
+        onChangeResolution={setInputResolution}
+      />
       <FourierCanvas points={points} fft={fft} onChange={setFFTData} />
-      <OutputCanvas fft={fft} real={fftData?.re} imaginary={fftData?.im} />
+      <FourierClearRange />
+      <OutputCanvas
+        fft={fft}
+        real={fftData?.re}
+        imaginary={fftData?.im}
+        inputResolution={inputResolution}
+      />
     </Wrapper>
   )
 }
