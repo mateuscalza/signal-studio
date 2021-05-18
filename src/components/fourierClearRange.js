@@ -2,13 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce, useMeasure } from 'react-use'
 import styled from 'styled-components'
 import Slider from '@material-ui/core/Slider'
-
-const padding = {
-  top: 10,
-  left: 10,
-  bottom: 10,
-  right: 50,
-}
+import padding from '../utils/padding'
 
 const Wrapper = styled.div`
   position: relative;
@@ -29,19 +23,19 @@ const Wrapper = styled.div`
 export default function FourierClearRange({ value, onChange }) {
   const [wrapperRef, { width, height }] = useMeasure()
 
-  console.log(value)
+  const rangeWidth = width - padding.left - padding.right
 
   return (
     <Wrapper ref={wrapperRef}>
       <main
         style={{
-          width: width - padding.left - padding.right,
+          width: rangeWidth,
           height: height - padding.top - padding.bottom,
         }}
       >
         <Slider
           min={0}
-          max={width}
+          max={rangeWidth}
           step={1}
           value={value}
           onChange={(event, newValue) => onChange(newValue)}
