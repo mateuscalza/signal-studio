@@ -115,11 +115,11 @@ export default function FourierCanvas({
     }
 
     onChange(filteredResultClone)
-  }, [fourierClearRange, fftDataResult])
+  }, [fourierClearRange, fftDataResult, onChange])
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvasWidth || !canvasHeight || !canvas || !inputResolution.x) {
+    if (!canvasWidth || !canvasHeight || !canvas) {
       return
     }
 

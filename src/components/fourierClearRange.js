@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useDebounce, useMeasure } from 'react-use'
-import styled from 'styled-components'
 import Slider from '@material-ui/core/Slider'
+import React from 'react'
+import { useMeasure } from 'react-use'
+import styled from 'styled-components'
 import padding from '../utils/padding'
 
 const Wrapper = styled.div`

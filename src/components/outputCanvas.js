@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
+import styled from 'styled-components'
 import padding from '../utils/padding'
 
 const Wrapper = styled.div`
@@ -90,7 +90,14 @@ export default function OutputCanvas({
     }
 
     context.putImageData(canvasData, 0, 0)
-  }, [canvasRef, canvasWidth, canvasHeight, pointsResult.value])
+  }, [
+    canvasRef,
+    canvasWidth,
+    canvasHeight,
+    pointsResult.value,
+    inputResolution.x,
+    inputResolution.y,
+  ])
 
   if (pointsResult.error) {
     return pointsResult.error.message

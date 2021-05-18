@@ -87,7 +87,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       x: width - padding.left - padding.right,
       y: height - padding.top - padding.bottom,
     })
-  }, [width, height])
+  }, [width, height, onChangeResolution])
 
   const handleClick = useCallback(
     (event) => {
