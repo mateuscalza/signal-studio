@@ -26,7 +26,13 @@ const green = 132
 const blue = 227
 const alpha = 255
 
-export default function FourierCanvas({ points, fft, onChange }) {
+export default function FourierCanvas({
+  points,
+  fft,
+  onChange,
+  inputResolution,
+  fourierClearRange,
+}) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const fftDataResult = useAsync(async () => {
@@ -68,19 +74,19 @@ export default function FourierCanvas({ points, fft, onChange }) {
     let real = Array.from(result.re)
     let imaginary = Array.from(result.im)
 
-    fftshift(real)
-    fftshift(imaginary)
+    // fftshift(real)
+    // fftshift(imaginary)
 
-    const preserve = 0.01
-    const nToClear = Math.floor((real.length / 2) * (1 - preserve))
-    const map = (value, index, list) =>
-      index < nToClear || list.length - index < nToClear ? 0 : value
+    // const preserve = 0.01
+    // const nToClear = Math.floor((real.length / 2) * (1 - preserve))
+    // const map = (value, index, list) =>
+    //   index < nToClear || list.length - index < nToClear ? 0 : value
 
-    real = real.map(map)
-    imaginary = imaginary.map(map)
+    // real = real.map(map)
+    // imaginary = imaginary.map(map)
 
-    ifftshift(real)
-    ifftshift(imaginary)
+    // ifftshift(real)
+    // ifftshift(imaginary)
 
     const immutableResult = {
       im: imaginary,
@@ -88,13 +94,29 @@ export default function FourierCanvas({ points, fft, onChange }) {
     }
 
     console.timeEnd('fft')
-    onChange(immutableResult)
     return immutableResult
   }, [points])
 
   useEffect(() => {
+    if (!fftDataResult.value) {
+      return
+    }
+
+    const min = Math.min(...fourierClearRange)
+    const max = Math.max(...fourierClearRange)
+
+    const map = (y, x) => (x >= min && x <= max ? 0 : y)
+    const filteredResultClone = {
+      im: Array.from(fftDataResult.value.im).map(map),
+      re: Array.from(fftDataResult.value.re).map(map),
+    }
+
+    onChange(filteredResultClone)
+  }, [fourierClearRange, fftDataResult])
+
+  useEffect(() => {
     const canvas = canvasRef.current
-    if (!width || !height || !canvas) {
+    if (!width || !height || !canvas || !inputResolution.x) {
       return
     }
 
@@ -117,7 +139,9 @@ export default function FourierCanvas({ points, fft, onChange }) {
       frequency < Math.min(fftResultAbsolute.length, width);
       frequency++
     ) {
-      const y = Math.floor((1 - fftResultAbsolute[frequency] / max) * height)
+      const y = Math.floor(
+        (1 - fftResultAbsolute[frequency] / inputResolution.x) * height - 0.5
+      )
       const index = (frequency + y * width) * 4
 
       canvasData.data[index + 0] = red

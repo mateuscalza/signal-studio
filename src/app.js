@@ -15,6 +15,7 @@ const Wrapper = styled.div`
 
 export default function App() {
   const [points, setPoints] = useState([])
+  const [fourierClearRange, setFourierClearRange] = useState([59, 61])
   const [inputResolution, setInputResolution] = useState({ x: null, y: null })
   const radix = useMemo(
     () => (points.length ? findRadix(points.length) : null),
@@ -29,8 +30,17 @@ export default function App() {
         onChange={setPoints}
         onChangeResolution={setInputResolution}
       />
-      <FourierCanvas points={points} fft={fft} onChange={setFFTData} />
-      <FourierClearRange />
+      <FourierCanvas
+        points={points}
+        fft={fft}
+        onChange={setFFTData}
+        inputResolution={inputResolution}
+        fourierClearRange={fourierClearRange}
+      />
+      <FourierClearRange
+        value={fourierClearRange}
+        onChange={setFourierClearRange}
+      />
       <OutputCanvas
         fft={fft}
         real={fftData?.re}

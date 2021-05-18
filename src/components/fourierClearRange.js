@@ -26,8 +26,10 @@ const Wrapper = styled.div`
   }
 `
 
-export default function FourierClearRange({ onChange }) {
+export default function FourierClearRange({ value, onChange }) {
   const [wrapperRef, { width, height }] = useMeasure()
+
+  console.log(value)
 
   return (
     <Wrapper ref={wrapperRef}>
@@ -37,7 +39,15 @@ export default function FourierClearRange({ onChange }) {
           height: height - padding.top - padding.bottom,
         }}
       >
-        <Slider min={0} max={width} step={1} />
+        <Slider
+          min={0}
+          max={width}
+          step={1}
+          value={value}
+          onChange={(event, newValue) => onChange(newValue)}
+          valueLabelDisplay='auto'
+          aria-labelledby='range-slider'
+        />
       </main>
     </Wrapper>
   )
