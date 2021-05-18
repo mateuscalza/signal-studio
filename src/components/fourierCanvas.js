@@ -34,6 +34,10 @@ export default function FourierCanvas({
   fourierClearRange,
 }) {
   const [wrapperRef, { width, height }] = useMeasure()
+
+  const canvasWidth = width - padding.left - padding.right
+  const canvasHeight = height - padding.top - padding.bottom
+
   const canvasRef = useRef(null)
   const fftDataResult = useAsync(async () => {
     const length = points.length
@@ -71,8 +75,8 @@ export default function FourierCanvas({
 
     const result = fft.forward(points, 'none')
 
-    let real = Array.from(result.re)
-    let imaginary = Array.from(result.im)
+    const real = Array.from(result.re)
+    const imaginary = Array.from(result.im)
 
     // fftshift(real)
     // fftshift(imaginary)
@@ -89,8 +93,8 @@ export default function FourierCanvas({
     // ifftshift(imaginary)
 
     const immutableResult = {
-      im: imaginary,
       re: real,
+      im: imaginary,
     }
 
     console.timeEnd('fft')
@@ -116,12 +120,12 @@ export default function FourierCanvas({
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!width || !height || !canvas || !inputResolution.x) {
+    if (!canvasWidth || !canvasHeight || !canvas || !inputResolution.x) {
       return
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, width, height)
+    context.clearRect(0, 0, canvasWidth, canvasHeight)
 
     if (!fftDataResult.value) {
       return
@@ -132,17 +136,21 @@ export default function FourierCanvas({
     )
 
     const max = Math.max(...fftResultAbsolute)
-    const canvasData = context.getImageData(0, 0, width, height)
+    console.log('canvasHeight', canvasHeight)
+    console.log('max', max)
+    console.log('fftResultAbsolute', fftResultAbsolute)
+    const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
 
     for (
       let frequency = 0;
-      frequency < Math.min(fftResultAbsolute.length, width);
+      frequency < Math.min(fftResultAbsolute.length, canvasWidth);
       frequency++
     ) {
       const y = Math.floor(
-        (1 - fftResultAbsolute[frequency] / inputResolution.x) * height - 0.5
+        (1 - fftResultAbsolute[frequency] / max) * canvasHeight
       )
-      const index = (frequency + y * width) * 4
+      console.log(frequency, y)
+      const index = (frequency + y * canvasWidth) * 4
 
       canvasData.data[index + 0] = red
       canvasData.data[index + 1] = green
@@ -151,7 +159,7 @@ export default function FourierCanvas({
     }
 
     context.putImageData(canvasData, 0, 0)
-  }, [canvasRef, width, height, fftDataResult.value])
+  }, [canvasRef, canvasWidth, canvasHeight, fftDataResult.value])
 
   if (fftDataResult.error) {
     return fftDataResult.error.message
@@ -159,11 +167,7 @@ export default function FourierCanvas({
 
   return (
     <Wrapper ref={wrapperRef}>
-      <canvas
-        ref={canvasRef}
-        width={width - padding.left - padding.right}
-        height={height - padding.top - padding.bottom}
-      />
+      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
     </Wrapper>
   )
 }
