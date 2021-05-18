@@ -33,6 +33,9 @@ export default function OutputCanvas({
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
 
+  const canvasWidth = width - padding.left - padding.right
+  const canvasHeight = height - padding.top - padding.bottom
+
   const pointsResult = useAsync(async () => {
     if (!real || !imaginary || !fft) {
       return null
@@ -48,8 +51,8 @@ export default function OutputCanvas({
     const canvas = canvasRef.current
     const points = pointsResult.value || []
     if (
-      !width ||
-      !height ||
+      !canvasWidth ||
+      !canvasHeight ||
       !canvas ||
       !inputResolution.x ||
       !inputResolution.y
@@ -58,14 +61,14 @@ export default function OutputCanvas({
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, width, height)
+    context.clearRect(0, 0, canvasWidth, canvasHeight)
 
-    const canvasData = context.getImageData(0, 0, width, height)
+    const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
 
     let hasStarted = false
     let last = undefined
 
-    for (let x = 0; x < Math.min(points.length, width); x++) {
+    for (let x = 0; x < Math.min(points.length, canvasWidth); x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
       }
@@ -75,7 +78,10 @@ export default function OutputCanvas({
       last = y
 
       const index =
-        (x + Math.floor((1 - y / inputResolution.y) * height) * width) * 4
+        (x +
+          Math.floor((1 - y / inputResolution.y) * canvasHeight) *
+            canvasWidth) *
+        4
 
       canvasData.data[index + 0] = red
       canvasData.data[index + 1] = green
@@ -84,7 +90,7 @@ export default function OutputCanvas({
     }
 
     context.putImageData(canvasData, 0, 0)
-  }, [canvasRef, width, height, pointsResult.value])
+  }, [canvasRef, canvasWidth, canvasHeight, pointsResult.value])
 
   if (pointsResult.error) {
     return pointsResult.error.message
@@ -92,11 +98,7 @@ export default function OutputCanvas({
 
   return (
     <Wrapper ref={wrapperRef}>
-      <canvas
-        ref={canvasRef}
-        width={width - padding.left - padding.right}
-        height={height - padding.top - padding.bottom}
-      />
+      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
     </Wrapper>
   )
 }

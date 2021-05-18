@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
-import { fftshift, ifftshift } from 'fftshift'
 import padding from '../utils/padding'
 
 const Wrapper = styled.div`
@@ -136,9 +135,6 @@ export default function FourierCanvas({
     )
 
     const max = Math.max(...fftResultAbsolute)
-    console.log('canvasHeight', canvasHeight)
-    console.log('max', max)
-    console.log('fftResultAbsolute', fftResultAbsolute)
     const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
 
     for (
@@ -149,7 +145,6 @@ export default function FourierCanvas({
       const y = Math.floor(
         (1 - fftResultAbsolute[frequency] / max) * canvasHeight
       )
-      console.log(frequency, y)
       const index = (frequency + y * canvasWidth) * 4
 
       canvasData.data[index + 0] = red
