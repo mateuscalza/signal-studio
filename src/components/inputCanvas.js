@@ -10,13 +10,15 @@ const Wrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   background-color: #2c3e50;
 
   canvas {
     position: absolute;
     top: ${padding.top}px;
     left: ${padding.left}px;
-    background-color: #34495e;
+    background-color: rgba(255, 255, 255, 0.05);
     box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
@@ -111,6 +113,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
 
   return (
     <Wrapper ref={wrapperRef}>
+      <h2>Input</h2>
       <canvas
         ref={canvasRef}
         width={width - padding.left - padding.right}
