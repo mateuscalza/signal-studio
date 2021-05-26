@@ -10,7 +10,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #2c3e50;
 
   canvas {
     position: absolute;

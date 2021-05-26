@@ -8,14 +8,13 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #2c3e50;
   height: 50px;
 
   main {
     position: absolute;
     top: ${padding.top}px;
     left: ${padding.left}px;
-    background-color: #34495e;
+    background-color: rgba(255, 255, 255, 0.05);
     box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `

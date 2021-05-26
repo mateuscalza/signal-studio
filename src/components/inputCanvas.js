@@ -12,7 +12,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #2c3e50;
 
   canvas {
     position: absolute;
@@ -33,7 +32,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
 
-  useDebounce(() => onChange(fillMissing(points)), 1000, [points])
+  useDebounce(() => onChange(fillMissing(points)), 1, [points])
 
   useEffect(() => {
     const canvas = canvasRef.current

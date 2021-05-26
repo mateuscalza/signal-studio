@@ -10,7 +10,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #2c3e50;
   z-index: 1;
 
   canvas {
@@ -139,6 +138,7 @@ export default function FourierCanvas({
     const max = Math.max(...fftResultAbsolute)
     const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
 
+    context.beginPath()
     for (
       let frequency = 0;
       frequency < Math.min(fftResultAbsolute.length, canvasWidth);
@@ -147,15 +147,12 @@ export default function FourierCanvas({
       const y = Math.floor(
         (1 - fftResultAbsolute[frequency] / max) * canvasHeight
       )
-      const index = (frequency + y * canvasWidth) * 4
 
-      canvasData.data[index + 0] = red
-      canvasData.data[index + 1] = green
-      canvasData.data[index + 2] = blue
-      canvasData.data[index + 3] = alpha
+      context[frequency === 0 ? 'moveTo' : 'lineTo'](frequency, y)
     }
-
-    context.putImageData(canvasData, 0, 0)
+    context.lineWidth = 2
+    context.strokeStyle = `rgba(${red},${green},${blue},1)`
+    context.stroke()
   }, [canvasRef, canvasWidth, canvasHeight, fftDataResult.value])
 
   if (fftDataResult.error) {
