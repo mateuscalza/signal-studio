@@ -32,7 +32,6 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const canvasHeight = height - padding.top - padding.bottom
 
   useDebounce(() => onChange(fillMissing(points)), 200, [points])
-  console.log('points', points)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -92,7 +91,6 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
     (event) => {
       setPoints((oldPoints) => {
         const clone = Array.from(oldPoints)
-        console.log(canvasHeight - event.nativeEvent.offsetY, event.nativeEvent)
         clone[event.nativeEvent.offsetX] =
           canvasHeight - event.nativeEvent.offsetY
         return clone
