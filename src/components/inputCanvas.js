@@ -28,16 +28,20 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
 
+  const canvasWidth = width - padding.left - padding.right
+  const canvasHeight = height - padding.top - padding.bottom
+
   useDebounce(() => onChange(fillMissing(points)), 200, [points])
+  console.log('points', points)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!width || !height || !canvas) {
+    if (!canvasWidth || !canvasHeight || !canvas) {
       return
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, width, height)
+    context.clearRect(0, 0, canvasWidth, canvasHeight)
 
     let initialX = 0
     let finalX = 0
@@ -46,7 +50,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
     let last = undefined
 
     context.beginPath()
-    for (let x = 0; x < Math.min(points.length, width); x++) {
+    for (let x = 0; x < Math.min(points.length, canvasWidth); x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
       } else if (typeof points[x] !== 'undefined' && !hasStarted) {
@@ -58,7 +62,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       last = y
       finalX = x
 
-      context[x === initialX ? 'moveTo' : 'lineTo'](x, height - y)
+      context[x === initialX ? 'moveTo' : 'lineTo'](x, canvasHeight - y)
     }
     context.lineWidth = 2
     context.strokeStyle = primary
@@ -66,33 +70,35 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
 
     context.beginPath()
     context.moveTo(initialX, 0)
-    context.lineTo(initialX, height)
+    context.lineTo(initialX, canvasHeight)
     context.strokeStyle = 'rgba(255,255,255,0.1)'
     context.stroke()
 
     const radix = findRadix(finalX - initialX)
     context.beginPath()
     context.moveTo(initialX + radix, 0)
-    context.lineTo(initialX + radix, height)
+    context.lineTo(initialX + radix, canvasHeight)
     context.stroke()
-  }, [canvasRef, width, height, points])
+  }, [canvasRef, canvasWidth, canvasHeight, points])
 
   useEffect(() => {
     onChangeResolution({
-      x: width - padding.left - padding.right,
-      y: height - padding.top - padding.bottom,
+      x: canvasWidth - padding.left - padding.right,
+      y: canvasHeight - padding.top - padding.bottom,
     })
-  }, [width, height, onChangeResolution])
+  }, [canvasWidth, canvasHeight, onChangeResolution])
 
   const handleClick = useCallback(
     (event) => {
       setPoints((oldPoints) => {
         const clone = Array.from(oldPoints)
-        clone[event.nativeEvent.offsetX] = height - event.nativeEvent.offsetY
+        console.log(canvasHeight - event.nativeEvent.offsetY, event.nativeEvent)
+        clone[event.nativeEvent.offsetX] =
+          canvasHeight - event.nativeEvent.offsetY
         return clone
       })
     },
-    [height]
+    [canvasHeight]
   )
   const handleMouseMove = useCallback(
     (event) => {
@@ -109,8 +115,8 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       <h2>Input</h2>
       <canvas
         ref={canvasRef}
-        width={width - padding.left - padding.right}
-        height={height - padding.top - padding.bottom}
+        width={canvasWidth}
+        height={canvasHeight}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
       />
