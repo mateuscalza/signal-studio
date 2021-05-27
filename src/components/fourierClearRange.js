@@ -40,6 +40,7 @@ export default function FourierClearRange({ value, onChange }) {
           onChange={(event, newValue) => onChange(newValue)}
           valueLabelDisplay='auto'
           aria-labelledby='range-slider'
+          ValueLabelComponent={}
         />
       </main>
     </Wrapper>
