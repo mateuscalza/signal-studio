@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce, useMeasure } from 'react-use'
 import styled from 'styled-components'
+import { primary } from '../utils/colors'
 import fillMissing from '../utils/fillMissing'
 import findRadix from '../utils/findRadix'
 import padding from '../utils/padding'
@@ -21,11 +22,6 @@ const Wrapper = styled.div`
     box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
-
-const red = 9
-const green = 132
-const blue = 227
-const alpha = 255
 
 export default function InputCanvas({ onChange, onChangeResolution }) {
   const [wrapperRef, { width, height }] = useMeasure()
@@ -65,7 +61,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       context[x === initialX ? 'moveTo' : 'lineTo'](x, height - y)
     }
     context.lineWidth = 2
-    context.strokeStyle = `rgba(${red},${green},${blue},1)`
+    context.strokeStyle = primary
     context.stroke()
 
     context.beginPath()

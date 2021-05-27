@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
+import { primary } from '../utils/colors'
 import padding from '../utils/padding'
 
 const Wrapper = styled.div`
@@ -19,11 +20,6 @@ const Wrapper = styled.div`
     box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
-const red = 9
-
-const green = 132
-const blue = 227
-const alpha = 255
 
 export default function OutputCanvas({
   fft,
@@ -80,7 +76,7 @@ export default function OutputCanvas({
       context[x === 0 ? 'moveTo' : 'lineTo'](x, canvasHeight - y)
     }
     context.lineWidth = 2
-    context.strokeStyle = `rgba(${red},${green},${blue},1)`
+    context.strokeStyle = primary
     context.stroke()
   }, [
     canvasRef,

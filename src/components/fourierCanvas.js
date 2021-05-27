@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
+import { primary, secondary } from '../utils/colors'
 import padding from '../utils/padding'
 
 const Wrapper = styled.div`
@@ -21,16 +22,10 @@ const Wrapper = styled.div`
   }
 `
 
-const red = 9
-const green = 132
-const blue = 227
-const alpha = 255
-
 export default function FourierCanvas({
   points,
   fft,
   onChange,
-  inputResolution,
   fourierClearRange,
 }) {
   const [wrapperRef, { width, height }] = useMeasure()
@@ -136,7 +131,15 @@ export default function FourierCanvas({
     )
 
     const max = Math.max(...fftResultAbsolute)
+    const minBand = Math.min(...fourierClearRange)
+    const maxBand = Math.max(...fourierClearRange)
+
     context.beginPath()
+    context.lineWidth = 2
+
+    let isAfterBandStart = false
+    let isAfterBandStop = false
+
     for (
       let frequency = 0;
       frequency < Math.min(fftResultAbsolute.length, canvasWidth);
@@ -146,12 +149,35 @@ export default function FourierCanvas({
         (1 - fftResultAbsolute[frequency] / max) * canvasHeight
       )
 
+      if (frequency >= minBand && !isAfterBandStart) {
+        context.strokeStyle = primary
+        context.stroke()
+
+        context.beginPath()
+        context.lineWidth = 2
+        context.strokeStyle = secondary
+        isAfterBandStart = true
+      }
+
+      if (frequency >= maxBand && isAfterBandStart && !isAfterBandStop) {
+        context.stroke()
+
+        context.beginPath()
+        context.lineWidth = 2
+        context.strokeStyle = primary
+        isAfterBandStop = true
+      }
+
       context[frequency === 0 ? 'moveTo' : 'lineTo'](frequency, y)
     }
-    context.lineWidth = 2
-    context.strokeStyle = `rgba(${red},${green},${blue},1)`
     context.stroke()
-  }, [canvasRef, canvasWidth, canvasHeight, fftDataResult.value])
+  }, [
+    canvasRef,
+    canvasWidth,
+    canvasHeight,
+    fftDataResult.value,
+    fourierClearRange,
+  ])
 
   if (fftDataResult.error) {
     return fftDataResult.error.message

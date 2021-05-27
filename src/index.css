@@ -30,3 +30,10 @@ h2 {
   font-weight: 700;
   margin: 15px 0;
 }
+
+.PrivateValueLabel-circle-4 {
+  transform: translate(0, 70px) rotate(135deg) !important;
+}
+.PrivateValueLabel-label-5 {
+  transform: rotate(225deg) !important;
+}
