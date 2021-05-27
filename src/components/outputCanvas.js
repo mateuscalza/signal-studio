@@ -64,11 +64,10 @@ export default function OutputCanvas({
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvasWidth, canvasHeight)
 
-    const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
-
     let hasStarted = false
     let last = undefined
 
+    context.beginPath()
     for (let x = 0; x < Math.min(points.length, canvasWidth); x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
@@ -78,19 +77,11 @@ export default function OutputCanvas({
       const y = typeof points[x] !== 'undefined' ? Math.floor(points[x]) : last
       last = y
 
-      const index =
-        (x +
-          Math.floor((1 - y / inputResolution.y) * canvasHeight) *
-            canvasWidth) *
-        4
-
-      canvasData.data[index + 0] = red
-      canvasData.data[index + 1] = green
-      canvasData.data[index + 2] = blue
-      canvasData.data[index + 3] = alpha
+      context[x === 0 ? 'moveTo' : 'lineTo'](x, canvasHeight - y)
     }
-
-    context.putImageData(canvasData, 0, 0)
+    context.lineWidth = 2
+    context.strokeStyle = `rgba(${red},${green},${blue},1)`
+    context.stroke()
   }, [
     canvasRef,
     canvasWidth,

@@ -32,7 +32,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
 
-  useDebounce(() => onChange(fillMissing(points)), 1, [points])
+  useDebounce(() => onChange(fillMissing(points)), 200, [points])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -43,13 +43,13 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, width, height)
 
-    const canvasData = context.getImageData(0, 0, width, height)
-
     let initialX = 0
     let finalX = 0
 
     let hasStarted = false
     let last = undefined
+
+    context.beginPath()
     for (let x = 0; x < Math.min(points.length, width); x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
@@ -60,20 +60,18 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
 
       const y = typeof points[x] !== 'undefined' ? points[x] : last
       last = y
-      const index = (x + (height - y) * width) * 4
       finalX = x
 
-      canvasData.data[index + 0] = red
-      canvasData.data[index + 1] = green
-      canvasData.data[index + 2] = blue
-      canvasData.data[index + 3] = alpha
+      context[x === initialX ? 'moveTo' : 'lineTo'](x, height - y)
     }
-
-    context.putImageData(canvasData, 0, 0)
+    context.lineWidth = 2
+    context.strokeStyle = `rgba(${red},${green},${blue},1)`
+    context.stroke()
 
     context.beginPath()
     context.moveTo(initialX, 0)
     context.lineTo(initialX, height)
+    context.strokeStyle = 'rgba(255,255,255,0.1)'
     context.stroke()
 
     const radix = findRadix(finalX - initialX)

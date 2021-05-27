@@ -136,8 +136,6 @@ export default function FourierCanvas({
     )
 
     const max = Math.max(...fftResultAbsolute)
-    const canvasData = context.getImageData(0, 0, canvasWidth, canvasHeight)
-
     context.beginPath()
     for (
       let frequency = 0;
