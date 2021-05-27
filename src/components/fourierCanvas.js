@@ -1,24 +1,13 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary, secondary } from '../utils/colors'
 import padding from '../utils/padding'
 
-const Wrapper = styled.div`
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  z-index: 1;
-
+const Wrapper = styled.section`
   canvas {
-    position: absolute;
     top: ${padding.top}px;
     left: ${padding.left}px;
-    background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
 
@@ -29,6 +18,7 @@ export default function FourierCanvas({
   fourierClearRange,
 }) {
   const [wrapperRef, { width, height }] = useMeasure()
+  const [hoverPoint, setHoverPoint] = useState([null, null])
 
   const canvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
@@ -179,6 +169,16 @@ export default function FourierCanvas({
     fourierClearRange,
   ])
 
+  const handleMouseMove = useCallback(
+    (event) => {
+      setHoverPoint([
+        event.nativeEvent.offsetX,
+        canvasHeight - event.nativeEvent.offsetY,
+      ])
+    },
+    [canvasHeight]
+  )
+
   if (fftDataResult.error) {
     return fftDataResult.error.message
   }
@@ -186,7 +186,17 @@ export default function FourierCanvas({
   return (
     <Wrapper ref={wrapperRef}>
       <h2>FFT</h2>
-      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+      <span className='cursor'>
+        {hoverPoint[0]}
+        {hoverPoint[0] !== null ? 'x' : null}
+        {hoverPoint[1]}
+      </span>
+      <canvas
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+        onMouseMove={handleMouseMove}
+      />
     </Wrapper>
   )
 }

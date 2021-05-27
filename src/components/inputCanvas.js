@@ -6,20 +6,10 @@ import fillMissing from '../utils/fillMissing'
 import findRadix from '../utils/findRadix'
 import padding from '../utils/padding'
 
-const Wrapper = styled.div`
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-
+const Wrapper = styled.section`
   canvas {
-    position: absolute;
     top: ${padding.top}px;
     left: ${padding.left}px;
-    background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 3px 3px 6px rgb(0 0 0 / 20%);
   }
 `
 
@@ -27,6 +17,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
+  const [hoverPoint, setHoverPoint] = useState([null, null])
 
   const canvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
@@ -100,6 +91,10 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   )
   const handleMouseMove = useCallback(
     (event) => {
+      setHoverPoint([
+        event.nativeEvent.offsetX,
+        canvasHeight - event.nativeEvent.offsetY,
+      ])
       if (event.buttons !== 1) {
         return
       }
@@ -111,6 +106,11 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Input</h2>
+      <span className='cursor'>
+        {hoverPoint[0]}
+        {hoverPoint[0] !== null ? 'x' : null}
+        {hoverPoint[1]}
+      </span>
       <canvas
         ref={canvasRef}
         width={canvasWidth}
