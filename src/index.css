@@ -19,6 +19,21 @@ body {
   height: 100vh;
 }
 
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  background-color: #1a1a1a;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 1), 0 0 0 1000px rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 15px;
+  color: #fff;
+  overflow: auto;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
