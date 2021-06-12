@@ -12,8 +12,10 @@
     "fili": "^2.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-dropzone": "^11.3.2",
     "react-scripts": "4.0.3",
     "react-use": "^17.2.4",
+    "simple-statistics": "^7.7.0",
     "styled-components": "^5.3.0",
     "web-vitals": "^1.0.1"
   },

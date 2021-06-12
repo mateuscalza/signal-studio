@@ -63,6 +63,34 @@ section span.cursor {
   color: rgba(255, 255, 255, 0.2);
 }
 
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+input,
+select {
+  display: block;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.is-loading {
+  animation: twinkle 1s ease-in-out infinite;
+}
+
+.is-grabbing {
+  cursor: grabbing;
+}
+
 .PrivateValueLabel-circle-4 {
   transform: translate(0, 70px) rotate(135deg) !important;
 }
