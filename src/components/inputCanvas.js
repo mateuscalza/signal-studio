@@ -5,7 +5,6 @@ import { primary } from '../utils/colors'
 import fillMissing from '../utils/fillMissing'
 import findRadix from '../utils/findRadix'
 import padding from '../utils/padding'
-import Modal from './modal'
 
 const Wrapper = styled.section`
   canvas {
@@ -101,7 +100,7 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       }
       handleClick(event)
     },
-    [handleClick]
+    [handleClick, canvasHeight]
   )
 
   return (
