@@ -9,6 +9,8 @@ import findRadix from './utils/findRadix'
 import FourierClearRange from './components/fourierClearRange'
 import Modal from './components/modal'
 import CsvParser from './components/csvParser'
+import useFilters from './filters/filters'
+import FiltersControls from './filters/filtersControls'
 
 const Wrapper = styled.div`
   flex: 1;
@@ -31,7 +33,32 @@ export default function App() {
   )
   const fft = useMemo(() => (radix ? new FFT(radix) : null), [radix])
   const [fftData, setFFTData] = useState(null)
-  const output = input
+  const [filters, setFilters] = useState([
+    {
+      id: 'a',
+      type: 'fft-bandstop',
+      stopStart: 5,
+      stopEnd: 15,
+    },
+    // {
+    //   id: 'b',
+    //   type: 'fir-bandstop',
+    //   settings: {
+    //     stopStart: 5,
+    //     stopEnd: 15,
+    //   },
+    // },
+    // {
+    //   id: 'c',
+    //   type: 'iir-bandstop',
+    //   settings: {
+    //     stopStart: 5,
+    //     stopEnd: 15,
+    //   },
+    // },
+  ])
+
+  const output = useFilters(input, filters)
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: useCallback(([file]) => setDroppedFile(file), [setDroppedFile]),
@@ -43,15 +70,12 @@ export default function App() {
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
       <InputCanvas input={input} onChange={setInput} />
+      <FiltersControls filters={filters} onChange={setFilters} />
       <FourierCanvas
         points={input.values}
         fft={fft}
         onChange={setFFTData}
         fourierClearRange={fourierClearRange}
-      />
-      <FourierClearRange
-        value={fourierClearRange}
-        onChange={setFourierClearRange}
       />
       <OutputCanvas
         output={output}
