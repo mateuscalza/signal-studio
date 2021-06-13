@@ -62,7 +62,13 @@ export default function App() {
         isVisible={Boolean(droppedFile)}
         onClose={() => setDroppedFile(false)}
       >
-        {droppedFile ? <CsvParser file={droppedFile} /> : null}
+        {droppedFile ? (
+          <CsvParser
+            file={droppedFile}
+            onChangePoints={setPoints}
+            onEnd={() => setDroppedFile(false)}
+          />
+        ) : null}
       </Modal>
     </Wrapper>
   )

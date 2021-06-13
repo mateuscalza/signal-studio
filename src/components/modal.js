@@ -9,7 +9,7 @@ export default function Modal({
   isVisible,
   onClose,
   width = 500,
-  height = 300,
+  height = 400,
 }) {
   const modalRef = useRef(null)
   const [outer, setOuter] = useState()

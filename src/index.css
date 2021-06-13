@@ -20,6 +20,7 @@ body {
 }
 
 .modal {
+  display: flex;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -63,6 +64,17 @@ section span.cursor {
   color: rgba(255, 255, 255, 0.2);
 }
 
+.space {
+  flex: 1;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
+}
 label {
   display: block;
   margin-bottom: 10px;
@@ -70,6 +82,18 @@ label {
 input,
 select {
   display: block;
+  background-color: #fff;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+}
+input[type='submit'] {
+  background-color: #0984e3;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px 10px;
 }
 
 @keyframes twinkle {

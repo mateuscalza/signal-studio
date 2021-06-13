@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useLocalStorage } from 'react-use'
-import { median } from 'simple-statistics'
+import { useDebounce, useLocalStorage } from 'react-use'
+import * as math from 'mathjs'
+import { max, median, min } from 'simple-statistics'
 import { useFileContents } from '../hooks/fileContents'
+import fillMissing from '../utils/fillMissing'
 
-const minInterval = 0.000001
+const maxSupportedFrequency = 1000000
+const minInterval = 1 / maxSupportedFrequency
+const timeRound = String(maxSupportedFrequency).length - 1
 
-export default function CsvParser({ file, onChange }) {
+export default function CsvParser({ file, onChangePoints, onEnd }) {
   const [lineSeparator, setLineSeparator] = useLocalStorage(
     'lineSeparator',
     '\\n'
@@ -14,7 +18,9 @@ export default function CsvParser({ file, onChange }) {
     'columnSeparator',
     ','
   )
-  const [interval, setInterval] = useState(1)
+  const [interval, setInterval] = useState('1')
+  const [maxAmplitude, setMaxAmplitude] = useState('1')
+  const [minAmplitude, setMinAmplitude] = useState('0')
   const [valueColumn, setValueColumn] = useLocalStorage('valueColumn', '0')
   const [timeColumn, setTimeColumn] = useLocalStorage(
     'timeColumn',
@@ -72,18 +78,57 @@ export default function CsvParser({ file, onChange }) {
         ? time - items[index - 1][1]
         : 0
     )
-    console.log(differences, items)
     return median(differences)
+  }, [items])
+  const [datasetMinAmplitude, datasetMaxAmplitude] = useMemo(() => {
+    const values = items.map(([value]) =>
+      typeof value === 'number' ? value : 0
+    )
+
+    if (!values.length) {
+      return [null, null]
+    }
+
+    return [min(values), max(values)]
   }, [items])
 
   useEffect(() => {
     if (typeof datasetMedianInterval === 'number') {
-      setInterval(String(Math.max(minInterval, datasetMedianInterval)))
+      const normalizedInterval = math.round(
+        Math.max(minInterval, datasetMedianInterval),
+        timeRound
+      )
+      setInterval(String(normalizedInterval))
+    } else {
+      setInterval('1')
     }
   }, [datasetMedianInterval])
 
+  useEffect(() => {
+    if (
+      typeof datasetMinAmplitude === 'number' &&
+      typeof datasetMaxAmplitude === 'number'
+    ) {
+      setMinAmplitude(String(datasetMinAmplitude))
+      setMaxAmplitude(String(datasetMaxAmplitude))
+    } else {
+      setInterval('1')
+    }
+  }, [datasetMinAmplitude, datasetMaxAmplitude])
+
+  useDebounce(
+    () => onChangePoints(fillMissing(items.map(([value]) => value))),
+    500,
+    [items]
+  )
+
   return (
-    <form>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        onEnd()
+      }}
+    >
       <label>
         Line separator
         <input
@@ -153,6 +198,26 @@ export default function CsvParser({ file, onChange }) {
           onChange={(event) => setInterval(event.target.value)}
         />
       </label>
+      <label>
+        Minimum amplitude
+        <input
+          type='number'
+          value={minAmplitude}
+          onChange={(event) => setMinAmplitude(event.target.value)}
+        />
+      </label>
+      <label>
+        Maximum amplitude
+        <input
+          type='number'
+          value={maxAmplitude}
+          onChange={(event) => setMaxAmplitude(event.target.value)}
+        />
+      </label>
+
+      <div className='space' />
+
+      <input type='submit' value='Ok' />
     </form>
   )
 }
