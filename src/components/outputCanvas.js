@@ -2,26 +2,25 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useAsync, useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary } from '../utils/colors'
+import mapRange from '../utils/mapRange'
 import padding from '../utils/padding'
 
 const Wrapper = styled.section`
+  height: 220px;
+
   canvas {
     top: ${padding.top}px;
     left: ${padding.left}px;
+    margin-right: ${padding.top}px;
+    margin-bottom: ${padding.left}px;
   }
 `
 
-export default function OutputCanvas({
-  fft,
-  real,
-  imaginary,
-  inputResolution,
-}) {
+export default function OutputCanvas({ output, fft, real, imaginary }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
-  const [hoverPoint, setHoverPoint] = useState([null, null])
 
-  const canvasWidth = width - padding.left - padding.right
+  const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
 
   const pointsResult = useAsync(async () => {
@@ -32,61 +31,53 @@ export default function OutputCanvas({
     const result = fft.inverse(real, imaginary)
     const immutableResult = Array.from(result)
     console.timeEnd('ifft')
+    console.log('immutableResult', immutableResult)
     return immutableResult
   }, [real, imaginary])
 
   useEffect(() => {
     const canvas = canvasRef.current
     const points = pointsResult.value || []
-    if (
-      !canvasWidth ||
-      !canvasHeight ||
-      !canvas ||
-      !inputResolution.x ||
-      !inputResolution.y
-    ) {
+    if (!minCanvasWidth || !canvasHeight || !canvas) {
       return
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvasWidth, canvasHeight)
+    context.clearRect(0, 0, minCanvasWidth, canvasHeight)
 
     let hasStarted = false
     let last = undefined
 
     context.beginPath()
-    for (let x = 0; x < Math.min(points.length, canvasWidth); x++) {
+    for (let x = 0; x < points.length; x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
       }
       hasStarted = true
 
-      const y = typeof points[x] !== 'undefined' ? Math.floor(points[x]) : last
+      const y = typeof points[x] !== 'undefined' ? points[x] : last
       last = y
 
-      context[x === 0 ? 'moveTo' : 'lineTo'](x, canvasHeight - y)
+      const mappedY = mapRange(
+        y,
+        output.minAmplitude,
+        output.maxAmplitude,
+        canvasHeight,
+        0
+      )
+      context[x === 0 ? 'moveTo' : 'lineTo'](x, mappedY)
     }
     context.lineWidth = 2
     context.strokeStyle = primary
     context.stroke()
   }, [
     canvasRef,
-    canvasWidth,
+    minCanvasWidth,
     canvasHeight,
     pointsResult.value,
-    inputResolution.x,
-    inputResolution.y,
+    output.minAmplitude,
+    output.maxAmplitude,
   ])
-
-  const handleMouseMove = useCallback(
-    (event) => {
-      setHoverPoint([
-        event.nativeEvent.offsetX,
-        canvasHeight - event.nativeEvent.offsetY,
-      ])
-    },
-    [canvasHeight]
-  )
 
   if (pointsResult.error) {
     return pointsResult.error.message
@@ -95,16 +86,10 @@ export default function OutputCanvas({
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Output</h2>
-      <span className='cursor'>
-        {hoverPoint[0]}
-        {hoverPoint[0] !== null ? 'x' : null}
-        {hoverPoint[1]}
-      </span>
       <canvas
         ref={canvasRef}
-        width={canvasWidth}
+        width={Math.max((pointsResult.value || []).length, minCanvasWidth)}
         height={canvasHeight}
-        onMouseMove={handleMouseMove}
       />
     </Wrapper>
   )

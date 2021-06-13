@@ -11,9 +11,7 @@ import Modal from './components/modal'
 import CsvParser from './components/csvParser'
 
 const Wrapper = styled.div`
-  display: flex;
   flex: 1;
-  flex-direction: column;
 `
 
 export default function App() {
@@ -27,13 +25,13 @@ export default function App() {
   })
   const [droppedFile, setDroppedFile] = useState(null)
   const [fourierClearRange, setFourierClearRange] = useState([59, 61])
-  const [inputResolution, setInputResolution] = useState({ x: null, y: null })
   const radix = useMemo(
     () => (input.values.length ? findRadix(input.values.length) : null),
     [input.values]
   )
   const fft = useMemo(() => (radix ? new FFT(radix) : null), [radix])
   const [fftData, setFFTData] = useState(null)
+  const output = input
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: useCallback(([file]) => setDroppedFile(file), [setDroppedFile]),
@@ -44,16 +42,11 @@ export default function App() {
       {...getRootProps()}
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
-      <InputCanvas
-        input={input}
-        onChange={setInput}
-        onChangeResolution={setInputResolution}
-      />
+      <InputCanvas input={input} onChange={setInput} />
       <FourierCanvas
         points={input.values}
         fft={fft}
         onChange={setFFTData}
-        inputResolution={inputResolution}
         fourierClearRange={fourierClearRange}
       />
       <FourierClearRange
@@ -61,10 +54,10 @@ export default function App() {
         onChange={setFourierClearRange}
       />
       <OutputCanvas
+        output={output}
         fft={fft}
         real={fftData?.re}
         imaginary={fftData?.im}
-        inputResolution={inputResolution}
       />
       <Modal
         isVisible={Boolean(droppedFile)}

@@ -50,10 +50,11 @@ h2 {
 section {
   position: relative;
   display: flex;
-  flex: 1;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 section canvas {
   position: absolute;

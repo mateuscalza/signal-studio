@@ -5,9 +5,13 @@ import { primary, secondary } from '../utils/colors'
 import padding from '../utils/padding'
 
 const Wrapper = styled.section`
+  height: 220px;
+
   canvas {
     top: ${padding.top}px;
     left: ${padding.left}px;
+    margin-right: ${padding.top}px;
+    margin-bottom: ${padding.left}px;
   }
 `
 
@@ -18,9 +22,8 @@ export default function FourierCanvas({
   fourierClearRange,
 }) {
   const [wrapperRef, { width, height }] = useMeasure()
-  const [hoverPoint, setHoverPoint] = useState([null, null])
 
-  const canvasWidth = width - padding.left - padding.right
+  const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
 
   const canvasRef = useRef(null)
@@ -105,12 +108,11 @@ export default function FourierCanvas({
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvasWidth || !canvasHeight || !canvas) {
+    if (!minCanvasWidth || !canvasHeight || !canvas) {
       return
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvasWidth, canvasHeight)
 
     if (!fftDataResult.value) {
       return
@@ -118,6 +120,13 @@ export default function FourierCanvas({
 
     const fftResultAbsolute = fftDataResult.value.re.map((real, index) =>
       Math.sqrt(Math.pow(real, 2) + Math.pow(fftDataResult.value.im[index], 2))
+    )
+
+    context.clearRect(
+      0,
+      0,
+      Math.max(fftResultAbsolute.length, minCanvasWidth),
+      canvasHeight
     )
 
     const max = Math.max(...fftResultAbsolute)
@@ -130,11 +139,7 @@ export default function FourierCanvas({
     let isAfterBandStart = false
     let isAfterBandStop = false
 
-    for (
-      let frequency = 0;
-      frequency < Math.min(fftResultAbsolute.length, canvasWidth);
-      frequency++
-    ) {
+    for (let frequency = 0; frequency < fftResultAbsolute.length; frequency++) {
       const y = Math.floor(
         (1 - fftResultAbsolute[frequency] / max) * canvasHeight
       )
@@ -163,21 +168,21 @@ export default function FourierCanvas({
     context.stroke()
   }, [
     canvasRef,
-    canvasWidth,
+    minCanvasWidth,
     canvasHeight,
     fftDataResult.value,
     fourierClearRange,
   ])
 
-  const handleMouseMove = useCallback(
-    (event) => {
-      setHoverPoint([
-        event.nativeEvent.offsetX,
-        canvasHeight - event.nativeEvent.offsetY,
-      ])
-    },
-    [canvasHeight]
-  )
+  // const handleMouseMove = useCallback(
+  //   (event) => {
+  //     setHoverPoint([
+  //       event.nativeEvent.offsetX,
+  //       canvasHeight - event.nativeEvent.offsetY,
+  //     ])
+  //   },
+  //   [canvasHeight]
+  // )
 
   if (fftDataResult.error) {
     return fftDataResult.error.message
@@ -186,16 +191,11 @@ export default function FourierCanvas({
   return (
     <Wrapper ref={wrapperRef}>
       <h2>FFT</h2>
-      <span className='cursor'>
-        {hoverPoint[0]}
-        {hoverPoint[0] !== null ? 'x' : null}
-        {hoverPoint[1]}
-      </span>
       <canvas
         ref={canvasRef}
-        width={canvasWidth}
+        width={Math.max(points.length, minCanvasWidth)}
         height={canvasHeight}
-        onMouseMove={handleMouseMove}
+        // onMouseMove={handleMouseMove}
       />
     </Wrapper>
   )

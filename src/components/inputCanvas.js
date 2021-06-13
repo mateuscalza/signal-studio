@@ -4,22 +4,26 @@ import styled from 'styled-components'
 import { primary } from '../utils/colors'
 import fillMissing from '../utils/fillMissing'
 import findRadix from '../utils/findRadix'
+import mapRange from '../utils/mapRange'
 import padding from '../utils/padding'
 
 const Wrapper = styled.section`
+  height: 220px;
+
   canvas {
     top: ${padding.top}px;
     left: ${padding.left}px;
+    margin-right: ${padding.top}px;
+    margin-bottom: ${padding.left}px;
   }
 `
 
-export default function InputCanvas({ input, onChange, onChangeResolution }) {
+export default function InputCanvas({ input, onChange }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
-  const [hoverPoint, setHoverPoint] = useState([null, null])
 
-  const canvasWidth = width - padding.left - padding.right
+  const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
 
   useDebounce(
@@ -37,12 +41,12 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvasWidth || !canvasHeight || !canvas) {
+    if (!minCanvasWidth || !canvasHeight || !canvas) {
       return
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvasWidth, canvasHeight)
+    context.clearRect(0, 0, canvas.width, canvasHeight)
 
     let initialX = 0
     let finalX = 0
@@ -51,7 +55,7 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
     let last = undefined
 
     context.beginPath()
-    for (let x = 0; x < Math.min(points.length, canvasWidth); x++) {
+    for (let x = 0; x < points.length; x++) {
       if (typeof points[x] === 'undefined' && !hasStarted) {
         continue
       } else if (typeof points[x] !== 'undefined' && !hasStarted) {
@@ -63,7 +67,10 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
       last = y
       finalX = x
 
-      context[x === initialX ? 'moveTo' : 'lineTo'](x, canvasHeight - y)
+      context[x === initialX ? 'moveTo' : 'lineTo'](
+        x,
+        mapRange(y, input.minAmplitude, input.maxAmplitude, canvasHeight, 0)
+      )
     }
     context.lineWidth = 2
     context.strokeStyle = primary
@@ -80,14 +87,7 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
     context.moveTo(initialX + radix, 0)
     context.lineTo(initialX + radix, canvasHeight)
     context.stroke()
-  }, [canvasRef, canvasWidth, canvasHeight, points])
-
-  useEffect(() => {
-    onChangeResolution({
-      x: canvasWidth - padding.left - padding.right,
-      y: canvasHeight - padding.top - padding.bottom,
-    })
-  }, [canvasWidth, canvasHeight, onChangeResolution])
+  }, [canvasRef, minCanvasWidth, canvasHeight, points, input])
 
   useEffect(() => {
     if (input.source === 'draw') {
@@ -101,19 +101,25 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
     (event) => {
       setPoints((oldPoints) => {
         const clone = Array.from(oldPoints)
-        clone[event.nativeEvent.offsetX] =
-          canvasHeight - event.nativeEvent.offsetY
+        const value = mapRange(
+          event.nativeEvent.offsetY,
+          canvasHeight,
+          0,
+          input.minAmplitude,
+          input.maxAmplitude
+        )
+        clone[event.nativeEvent.offsetX] = value
         return clone
       })
     },
-    [canvasHeight]
+    [canvasHeight, input]
   )
   const handleMouseMove = useCallback(
     (event) => {
-      setHoverPoint([
-        event.nativeEvent.offsetX,
-        canvasHeight - event.nativeEvent.offsetY,
-      ])
+      // setHoverPoint([
+      //   event.nativeEvent.offsetX,
+      //   canvasHeight - event.nativeEvent.offsetY,
+      // ])
       if (event.buttons !== 1) {
         return
       }
@@ -125,14 +131,9 @@ export default function InputCanvas({ input, onChange, onChangeResolution }) {
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Input</h2>
-      <span className='cursor'>
-        {hoverPoint[0]}
-        {hoverPoint[0] !== null ? 'x' : null}
-        {hoverPoint[1]}
-      </span>
       <canvas
         ref={canvasRef}
-        width={canvasWidth}
+        width={Math.max(points.length, minCanvasWidth)}
         height={canvasHeight}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
