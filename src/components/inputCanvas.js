@@ -13,7 +13,7 @@ const Wrapper = styled.section`
   }
 `
 
-export default function InputCanvas({ onChange, onChangeResolution }) {
+export default function InputCanvas({ input, onChange, onChangeResolution }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
@@ -22,7 +22,18 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
   const canvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
 
-  useDebounce(() => onChange(fillMissing(points)), 200, [points])
+  useDebounce(
+    () => {
+      const values = fillMissing(points)
+      onChange((old) => ({
+        ...old,
+        source: 'draw',
+        values,
+      }))
+    },
+    200,
+    [points]
+  )
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -77,6 +88,14 @@ export default function InputCanvas({ onChange, onChangeResolution }) {
       y: canvasHeight - padding.top - padding.bottom,
     })
   }, [canvasWidth, canvasHeight, onChangeResolution])
+
+  useEffect(() => {
+    if (input.source === 'draw') {
+      return
+    }
+
+    setPoints(input.values)
+  }, [input])
 
   const handleClick = useCallback(
     (event) => {

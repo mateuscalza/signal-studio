@@ -17,13 +17,20 @@ const Wrapper = styled.div`
 `
 
 export default function App() {
-  const [points, setPoints] = useState([])
+  const [input, setInput] = useState({
+    source: 'none',
+    values: [],
+    minAmplitude: 0,
+    maxAmplitude: 1,
+    interval: 1,
+    initialTime: 0,
+  })
   const [droppedFile, setDroppedFile] = useState(null)
   const [fourierClearRange, setFourierClearRange] = useState([59, 61])
   const [inputResolution, setInputResolution] = useState({ x: null, y: null })
   const radix = useMemo(
-    () => (points.length ? findRadix(points.length) : null),
-    [points]
+    () => (input.values.length ? findRadix(input.values.length) : null),
+    [input.values]
   )
   const fft = useMemo(() => (radix ? new FFT(radix) : null), [radix])
   const [fftData, setFFTData] = useState(null)
@@ -38,11 +45,12 @@ export default function App() {
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
       <InputCanvas
-        onChange={setPoints}
+        input={input}
+        onChange={setInput}
         onChangeResolution={setInputResolution}
       />
       <FourierCanvas
-        points={points}
+        points={input.values}
         fft={fft}
         onChange={setFFTData}
         inputResolution={inputResolution}
@@ -65,7 +73,7 @@ export default function App() {
         {droppedFile ? (
           <CsvParser
             file={droppedFile}
-            onChangePoints={setPoints}
+            onChangeInput={setInput}
             onEnd={() => setDroppedFile(false)}
           />
         ) : null}

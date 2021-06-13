@@ -9,7 +9,7 @@ const maxSupportedFrequency = 1000000
 const minInterval = 1 / maxSupportedFrequency
 const timeRound = String(maxSupportedFrequency).length - 1
 
-export default function CsvParser({ file, onChangePoints, onEnd }) {
+export default function CsvParser({ file, onChangeInput, onEnd }) {
   const [lineSeparator, setLineSeparator] = useLocalStorage(
     'lineSeparator',
     '\\n'
@@ -65,10 +65,10 @@ export default function CsvParser({ file, onChangePoints, onEnd }) {
 
     return sortedLines
   }, [fileContents, lineSeparator, columnSeparator, valueColumn, timeColumn])
-  const datasetMedianInterval = useMemo(() => {
-    const hasTime = items.find((item) => typeof item[1] === 'number')
-    if (!hasTime) {
-      return null
+  const [datasetMedianInterval, datasetMinTime] = useMemo(() => {
+    const firstItem = items.find((item) => typeof item[1] === 'number')
+    if (!firstItem) {
+      return [null, 0]
     }
 
     const [, ...differences] = items.map(([, time], index) =>
@@ -78,7 +78,7 @@ export default function CsvParser({ file, onChangePoints, onEnd }) {
         ? time - items[index - 1][1]
         : 0
     )
-    return median(differences)
+    return [median(differences), firstItem[1] || 0]
   }, [items])
   const [datasetMinAmplitude, datasetMaxAmplitude] = useMemo(() => {
     const values = items.map(([value]) =>
@@ -117,9 +117,29 @@ export default function CsvParser({ file, onChangePoints, onEnd }) {
   }, [datasetMinAmplitude, datasetMaxAmplitude])
 
   useDebounce(
-    () => onChangePoints(fillMissing(items.map(([value]) => value))),
+    () => {
+      const values = fillMissing(items.map(([value]) => value))
+      if (
+        !isFinite(minAmplitude) ||
+        !isFinite(maxAmplitude) ||
+        !isFinite(interval) ||
+        !isFinite(datasetMinTime)
+      ) {
+        return
+      }
+
+      onChangeInput((old) => ({
+        ...old,
+        values,
+        source: 'file',
+        minAmplitude: Number(minAmplitude),
+        maxAmplitude: Number(maxAmplitude),
+        interval: Number(interval),
+        initialTime: datasetMinTime,
+      }))
+    },
     500,
-    [items]
+    [items, minAmplitude, maxAmplitude, interval, datasetMinTime]
   )
 
   return (
