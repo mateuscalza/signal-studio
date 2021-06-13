@@ -3,6 +3,8 @@ import { useLocalStorage } from 'react-use'
 import { median } from 'simple-statistics'
 import { useFileContents } from '../hooks/fileContents'
 
+const minInterval = 0.000001
+
 export default function CsvParser({ file, onChange }) {
   const [lineSeparator, setLineSeparator] = useLocalStorage(
     'lineSeparator',
@@ -13,8 +15,11 @@ export default function CsvParser({ file, onChange }) {
     ','
   )
   const [interval, setInterval] = useState(1)
-  const [valueColumn, setValueColumn] = useLocalStorage('valueColumn', 0)
-  const [timeColumn, setTimeColumn] = useLocalStorage('timeColumn', null)
+  const [valueColumn, setValueColumn] = useLocalStorage('valueColumn', '0')
+  const [timeColumn, setTimeColumn] = useLocalStorage(
+    'timeColumn',
+    'No time column'
+  )
   const fileContents = useFileContents(file)
   const items = useMemo(() => {
     const content = fileContents.value
@@ -27,22 +32,30 @@ export default function CsvParser({ file, onChange }) {
       ? new RegExp(columnSeparator)
       : null
 
+    const valueColumnIndex =
+      valueColumn && isFinite(valueColumn) ? Number(valueColumn) - 1 : null
+
+    const timeColumnIndex =
+      timeColumn && isFinite(timeColumn) ? Number(timeColumn) - 1 : null
+
     const lines = content.split(lineSeparatorRegExp).map((line) => {
       const columns = columnSeparatorRegExp
         ? line.split(columnSeparatorRegExp)
         : [line]
 
-      const value = Number(columns[valueColumn])
-      const time = timeColumn ? Number(columns[timeColumn]) : null
+      const value = Number(columns[valueColumnIndex])
+      const time =
+        timeColumnIndex !== null ? Number(columns[timeColumnIndex]) : null
       return [
         isNaN(value) && value !== null ? null : value,
         isNaN(time) && time !== null ? null : time,
       ]
     })
 
-    const sortedLines = timeColumn
-      ? lines.sort(([, aTime], [, bTime]) => aTime - bTime)
-      : lines
+    const sortedLines =
+      timeColumnIndex !== null
+        ? lines.sort(([, aTime], [, bTime]) => aTime - bTime)
+        : lines
 
     return sortedLines
   }, [fileContents, lineSeparator, columnSeparator, valueColumn, timeColumn])
@@ -53,17 +66,19 @@ export default function CsvParser({ file, onChange }) {
     }
 
     const [, ...differences] = items.map(([, time], index) =>
-      index !== 0 ? time - items[index - 1][1] : null
+      index !== 0 &&
+      typeof time === 'number' &&
+      typeof items[index - 1][1] === 'number'
+        ? time - items[index - 1][1]
+        : 0
     )
+    console.log(differences, items)
     return median(differences)
   }, [items])
 
   useEffect(() => {
-    if (
-      typeof datasetMedianInterval === 'number' &&
-      datasetMedianInterval > 0
-    ) {
-      setInterval(String(datasetMedianInterval))
+    if (typeof datasetMedianInterval === 'number') {
+      setInterval(String(Math.max(minInterval, datasetMedianInterval)))
     }
   }, [datasetMedianInterval])
 
@@ -86,7 +101,8 @@ export default function CsvParser({ file, onChange }) {
       <label>
         Value column
         <select
-          onChange={(event) => setValueColumn(Number(event.target.value) - 1)}
+          value={valueColumn}
+          onChange={(event) => setValueColumn(event.target.value)}
         >
           <option value='1'>1</option>
           <option value='2'>2</option>
@@ -106,17 +122,12 @@ export default function CsvParser({ file, onChange }) {
         </select>
       </label>
       <label>
-        Time column
+        Time column (seconds)
         <select
-          onChange={(event) =>
-            setTimeColumn(
-              event.target.value && isFinite(event.target.value)
-                ? Number(event.target.value) - 1
-                : null
-            )
-          }
+          value={timeColumn}
+          onChange={(event) => setTimeColumn(event.target.value)}
         >
-          <option>No time column</option>
+          <option value='No time column'>No time column</option>
           <option value='1'>1</option>
           <option value='2'>2</option>
           <option value='3'>3</option>
