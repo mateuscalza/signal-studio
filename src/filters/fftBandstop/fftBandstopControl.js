@@ -8,16 +8,20 @@ export default function FftBandstopControl({ filter, onChange }) {
         Start
         <input
           type='number'
-          value={filter.stopStart}
-          onChange={(event) => onChange({ stopStart: event.target.value })}
+          value={String(filter.stopStart)}
+          onChange={(event) =>
+            onChange({ stopStart: Number(event.target.value) })
+          }
         />
       </label>
       <label>
         Stop
         <input
           type='number'
-          value={filter.stopEnd}
-          onChange={(event) => onChange({ stopEnd: event.target.value })}
+          value={String(filter.stopEnd)}
+          onChange={(event) =>
+            onChange({ stopEnd: Number(event.target.value) })
+          }
         />
       </label>
       {/* <label>

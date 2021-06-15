@@ -12,6 +12,8 @@
     "fili": "^2.0.3",
     "mathjs": "^9.4.2",
     "nanoid": "^3.1.23",
+    "p-map": "^5.0.0",
+    "p-reduce": "^3.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.3.2",
@@ -34,7 +36,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "import/no-webpack-loader-syntax": "off"
+    }
   },
   "browserslist": {
     "production": [

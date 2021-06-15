@@ -16,28 +16,16 @@ const Wrapper = styled.section`
   }
 `
 
-export default function OutputCanvas({ output, fft, real, imaginary }) {
+export default function OutputCanvas({ output }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
 
   const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
 
-  const pointsResult = useAsync(async () => {
-    if (!real || !imaginary || !fft) {
-      return null
-    }
-    console.time('ifft')
-    const result = fft.inverse(real, imaginary)
-    const immutableResult = Array.from(result)
-    console.timeEnd('ifft')
-    console.log('immutableResult', immutableResult)
-    return immutableResult
-  }, [real, imaginary])
-
   useEffect(() => {
     const canvas = canvasRef.current
-    const points = pointsResult.value || []
+    const values = output.values || []
     if (!minCanvasWidth || !canvasHeight || !canvas) {
       return
     }
@@ -49,13 +37,13 @@ export default function OutputCanvas({ output, fft, real, imaginary }) {
     let last = undefined
 
     context.beginPath()
-    for (let x = 0; x < points.length; x++) {
-      if (typeof points[x] === 'undefined' && !hasStarted) {
+    for (let x = 0; x < values.length; x++) {
+      if (typeof values[x] === 'undefined' && !hasStarted) {
         continue
       }
       hasStarted = true
 
-      const y = typeof points[x] !== 'undefined' ? points[x] : last
+      const y = typeof values[x] !== 'undefined' ? values[x] : last
       last = y
 
       const mappedY = mapRange(
@@ -74,21 +62,17 @@ export default function OutputCanvas({ output, fft, real, imaginary }) {
     canvasRef,
     minCanvasWidth,
     canvasHeight,
-    pointsResult.value,
+    output.values,
     output.minAmplitude,
     output.maxAmplitude,
   ])
-
-  if (pointsResult.error) {
-    return pointsResult.error.message
-  }
 
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Output</h2>
       <canvas
         ref={canvasRef}
-        width={Math.max((pointsResult.value || []).length, minCanvasWidth)}
+        width={Math.max((output.values || []).length, minCanvasWidth)}
         height={canvasHeight}
       />
     </Wrapper>
