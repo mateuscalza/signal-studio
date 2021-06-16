@@ -75,7 +75,7 @@ export default function FourierCanvas({ input, output }) {
 
   const handleMouseMove = useCallback(
     (event) => {
-      if (!inputFFT.length) {
+      if (!inputFFT.length || !outputFFT.length) {
         return
       }
 
@@ -88,7 +88,10 @@ export default function FourierCanvas({ input, output }) {
           inputFFT.length
         )
       )
-      console.log(frequency)
+      if (!isFinite(inputFFT[frequency]) || !outputFFT[frequency]) {
+        return
+      }
+
       setCursor([frequency, inputFFT[frequency], outputFFT[frequency] ?? null])
     },
     [inputFFT, outputFFT, minCanvasWidth]
