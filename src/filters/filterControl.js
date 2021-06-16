@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import padding from '../utils/padding'
 import FftBandstopControl from './fftBandstop/fftBandstopControl'
 import FirBandstopControl from './firBandstop/firBandstopControl'
+import IirBandstopControl from './iirBandstop/iirBandstopControl'
 
 const Wrapper = styled.div`
   display: flex;
@@ -67,6 +68,16 @@ export default function FilterControl({ input, filter, onChange }) {
       return (
         <Wrapper>
           <FirBandstopControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+          />
+        </Wrapper>
+      )
+    case 'iir-bandstop':
+      return (
+        <Wrapper>
+          <IirBandstopControl
             input={input}
             filter={filter}
             onChange={onChange}

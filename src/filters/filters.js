@@ -4,10 +4,12 @@ import pReduce from 'p-reduce'
 import { useEffect, useState } from 'react'
 import fftBandstopWorker from 'workerize-loader!./fftBandstop/fftBandstop'
 import firBandstopWorker from 'workerize-loader!./firBandstop/firBandstop'
+import iirBandstopWorker from 'workerize-loader!./iirBandstop/iirBandstop'
 
 let workerResult
 let fftBandstopWorkerInstance
 let firBandstopWorkerInstance
+let iirBandstopWorkerInstance
 
 export async function applyFilter(input, filter, controller) {
   switch (filter.type) {
@@ -33,6 +35,18 @@ export async function applyFilter(input, filter, controller) {
         firBandstopWorkerInstance = undefined
       }
       workerResult = await firBandstopWorkerInstance.firBandstop(input, filter)
+      console.timeEnd('worker')
+      return workerResult
+    case 'iir-bandstop':
+      console.time('worker')
+      if (!iirBandstopWorkerInstance) {
+        iirBandstopWorkerInstance = iirBandstopWorker()
+      }
+      controller.abort = () => {
+        iirBandstopWorkerInstance?.terminate()
+        iirBandstopWorkerInstance = undefined
+      }
+      workerResult = await iirBandstopWorkerInstance.iirBandstop(input, filter)
       console.timeEnd('worker')
       return workerResult
     default:
