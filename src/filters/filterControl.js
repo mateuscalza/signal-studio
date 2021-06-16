@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import padding from '../utils/padding'
 import FftBandstopControl from './fftBandstop/fftBandstopControl'
+import FirBandstopControl from './firBandstop/firBandstopControl'
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,6 +57,16 @@ export default function FilterControl({ input, filter, onChange }) {
       return (
         <Wrapper>
           <FftBandstopControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+          />
+        </Wrapper>
+      )
+    case 'fir-bandstop':
+      return (
+        <Wrapper>
+          <FirBandstopControl
             input={input}
             filter={filter}
             onChange={onChange}

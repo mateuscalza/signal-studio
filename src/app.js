@@ -20,7 +20,9 @@ export default function App() {
     values: [],
     minAmplitude: 0,
     maxAmplitude: 1,
-    interval: 1,
+    originalMinAmplitude: 0,
+    originalMaxAmplitude: 1,
+    interval: 1 / 1000,
     initialTime: 0,
   })
   const [droppedFile, setDroppedFile] = useState(null)

@@ -1,4 +1,5 @@
 import { Fft as FFT } from 'fili'
+import { max, min } from 'mathjs'
 import findRadix from '../../utils/findRadix'
 
 export async function fftBandstop(input, filter) {
@@ -33,5 +34,7 @@ export async function fftBandstop(input, filter) {
   return {
     ...input,
     values: immutableReverseResult,
+    minAmplitude: min(immutableReverseResult),
+    maxAmplitude: max(immutableReverseResult),
   }
 }

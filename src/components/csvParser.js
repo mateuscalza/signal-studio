@@ -128,12 +128,16 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
         return
       }
 
+      const minAmplitudeNumber = Number(minAmplitude)
+      const maxAmplitudeNumber = Number(maxAmplitude)
       onChangeInput((old) => ({
         ...old,
         values,
         source: 'file',
-        minAmplitude: Number(minAmplitude),
-        maxAmplitude: Number(maxAmplitude),
+        minAmplitude: minAmplitudeNumber,
+        maxAmplitude: maxAmplitudeNumber,
+        originalMinAmplitude: minAmplitudeNumber,
+        originalMaxAmplitude: maxAmplitudeNumber,
         interval: Number(interval),
         initialTime: datasetMinTime,
       }))
