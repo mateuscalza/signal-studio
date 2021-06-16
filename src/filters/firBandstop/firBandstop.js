@@ -31,5 +31,8 @@ export async function firBandstop(input, filter) {
     values,
     minAmplitude: min(values),
     maxAmplitude: max(values),
+    filterInfo: {
+      firFilterCoefficients,
+    },
   }
 }

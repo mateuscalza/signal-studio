@@ -18,7 +18,8 @@ export default function NoiseControl({ input, filter, onChange, buttons }) {
             max={5}
           />
         </label>
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>{buttons}</div>
       </div>
       <div className='range' />
     </>

@@ -24,5 +24,9 @@ export async function linearRegression(input, filter) {
     values,
     minAmplitude: min(filteredOutputValues),
     maxAmplitude: max(filteredOutputValues),
+    filterInfo: {
+      equation: regressionResult.equation,
+      string: regressionResult.string,
+    },
   }
 }

@@ -51,9 +51,9 @@ export default function AddFilter({ onChange, onEnd }) {
       <button
         onClick={handleAddFilter({
           type: 'fir-bandstop',
-          order: 3,
-          stopStart: 59,
-          stopEnd: 61,
+          order: 6,
+          stopStart: 50,
+          stopEnd: 600,
         })}
       >
         FIR Bandstop

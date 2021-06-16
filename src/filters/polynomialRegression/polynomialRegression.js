@@ -10,9 +10,8 @@ export async function polynomialRegression(input, filter) {
   console.time('polynomial-regression')
   const regressionResult = regression.polynomial(
     input.values.map((value, index) => [index, value]),
-    { precision: 7, order: filter.order }
+    { precision: 10, order: filter.order }
   )
-  console.log('regressionResult', regressionResult)
   const equation = regressionResult.equation
   const values = input.values.map((value, index) =>
     equation.reduce(
@@ -29,5 +28,9 @@ export async function polynomialRegression(input, filter) {
     values,
     minAmplitude: min(filteredOutputValues),
     maxAmplitude: max(filteredOutputValues),
+    filterInfo: {
+      equation: regressionResult.equation,
+      string: regressionResult.string,
+    },
   }
 }

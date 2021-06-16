@@ -24,6 +24,7 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
   const [maxAmplitude, setMaxAmplitude] = useState('1')
   const [minAmplitude, setMinAmplitude] = useState('0')
   const [skipLines, setSkipLines] = useState('0')
+  const [dropLastLines, setDropLastLines] = useState('0')
   const [valueColumn, setValueColumn] = useLocalStorage('valueColumn', '0')
   const [timeColumn, setTimeColumn] = useLocalStorage(
     'timeColumn',
@@ -122,7 +123,8 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
   useDebounce(
     () => {
       const values = fillMissing(items.map(([value]) => value)).slice(
-        -(items.length - Number(skipLines))
+        Number(skipLines),
+        items.length - Number(dropLastLines)
       )
       if (
         !isFinite(minAmplitude) ||
@@ -145,10 +147,19 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
         originalMaxAmplitude: maxAmplitudeNumber,
         interval: Number(interval),
         initialTime: datasetMinTime,
+        filterInfo: {},
       }))
     },
     500,
-    [items, minAmplitude, maxAmplitude, interval, datasetMinTime, skipLines]
+    [
+      items,
+      minAmplitude,
+      maxAmplitude,
+      interval,
+      datasetMinTime,
+      skipLines,
+      dropLastLines,
+    ]
   )
 
   return (
@@ -249,6 +260,16 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
           type='number'
           value={skipLines}
           onChange={(event) => setSkipLines(event.target.value)}
+          min={0}
+          step={1}
+        />
+      </label>
+      <label>
+        Drop last lines
+        <input
+          type='number'
+          value={dropLastLines}
+          onChange={(event) => setDropLastLines(event.target.value)}
           min={0}
           step={1}
         />

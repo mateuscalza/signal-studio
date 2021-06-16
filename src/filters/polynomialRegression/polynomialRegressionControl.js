@@ -5,6 +5,7 @@ export default function PolynomialRegressionControl({
   filter,
   onChange,
   buttons,
+  filterInfo,
 }) {
   return (
     <>
@@ -20,10 +21,24 @@ export default function PolynomialRegressionControl({
             }
             min={1}
             step={1}
-            max={15}
+            max={3}
           />
         </label>
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>
+          {filterInfo.string ? (
+            <a
+              className='button gray'
+              href={`data:text/plain;charset=utf-8,${escape(
+                filterInfo.string
+              )}`}
+              download='expression.txt'
+            >
+              Equation
+            </a>
+          ) : null}
+          {buttons}
+        </div>
       </div>
       <div className='range' />
     </>

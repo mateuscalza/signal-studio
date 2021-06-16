@@ -9,6 +9,7 @@ export default function useFilters(input, filters) {
   const throttledInput = useThrottle(input, 300)
   const throttledFilters = useThrottle(filters, 300)
   const [result, setResult] = useState(input)
+  const [filtersInfo, setFiltersInfo] = useState(input)
 
   useEffect(() => {
     const controller = {
@@ -17,9 +18,16 @@ export default function useFilters(input, filters) {
 
     pReduce(
       throttledFilters,
-      (currentInput, currentFilter) =>
-        applyFilter(currentInput, currentFilter, controller),
-      throttledInput
+      async ([currentInput, currentFiltersInfo], currentFilter, index) => {
+        const filterResult = await applyFilter(
+          currentInput,
+          currentFilter,
+          controller
+        )
+        currentFiltersInfo[index] = filterResult.filterInfo
+        return [filterResult, currentFiltersInfo]
+      },
+      [throttledInput, []]
     )
       .catch((error) => {
         alert(error.message)
@@ -28,10 +36,13 @@ export default function useFilters(input, filters) {
           values: [],
         }
       })
-      .then(setResult)
+      .then(([currentInput, currentFiltersInfo]) => {
+        setResult(currentInput)
+        setFiltersInfo(currentFiltersInfo)
+      })
 
     return () => controller.abort()
   }, [throttledInput, throttledFilters])
 
-  return result
+  return [result, filtersInfo]
 }

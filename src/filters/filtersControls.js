@@ -12,6 +12,9 @@ const Wrapper = styled.div`
   .sortable {
     width: 100%;
   }
+  button {
+    margin: 5px;
+  }
 `
 
 export default function FiltersControls({
@@ -19,15 +22,22 @@ export default function FiltersControls({
   filters,
   onAddFilter,
   onChange,
+  filtersInfo,
 }) {
   return (
     <Wrapper>
-      <ReactSortable list={filters} setList={onChange} className='sortable'>
+      <ReactSortable
+        list={filters}
+        setList={onChange}
+        className='sortable'
+        handle='h2'
+      >
         {filters.map((filter, index) => (
           <FilterControl
             key={filter.id}
             filter={filter}
             input={input}
+            filterInfo={filtersInfo[index] || {}}
             onChange={(filterUpdate) =>
               onChange((old) =>
                 old.map((currentFilter, currentIndex) =>

@@ -44,6 +44,11 @@ const Wrapper = styled.div`
       margin: 0 0 0 10px;
       padding: 0 0 0 10px;
     }
+
+    button,
+    .button {
+      margin-left: 5px;
+    }
   }
 
   .range {
@@ -56,16 +61,17 @@ const Wrapper = styled.div`
   }
 `
 
-export default function FilterControl({ input, filter, onChange, onRemove }) {
+export default function FilterControl({
+  input,
+  filter,
+  filterInfo,
+  onChange,
+  onRemove,
+}) {
   const buttons = (
-    <>
-      <div className='space' />
-      <div className='buttons'>
-        <button onClick={onRemove} className='gray'>
-          Remove
-        </button>
-      </div>
-    </>
+    <button onClick={onRemove} className='gray'>
+      Remove
+    </button>
   )
   switch (filter.type) {
     case 'fft-bandstop':
@@ -74,6 +80,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <FftBandstopControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -85,6 +92,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <FirBandstopControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -96,6 +104,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <IirBandstopControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -107,6 +116,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <IqrOutlierRemovalControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -118,6 +128,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <LinearRegressionControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -129,6 +140,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <PolynomialRegressionControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />
@@ -140,6 +152,7 @@ export default function FilterControl({ input, filter, onChange, onRemove }) {
           <NoiseControl
             input={input}
             filter={filter}
+            filterInfo={filterInfo}
             onChange={onChange}
             buttons={buttons}
           />

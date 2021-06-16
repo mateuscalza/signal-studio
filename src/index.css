@@ -4,13 +4,15 @@ html {
 
 body {
   margin: 0;
+  background-color: #000;
+  user-select: none;
+}
+* {
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000;
-  user-select: none;
 }
 
 #root {
@@ -80,6 +82,9 @@ label {
   display: block;
   margin-bottom: 10px;
 }
+span {
+  user-select: text !important;
+}
 input,
 select {
   display: block;
@@ -87,21 +92,24 @@ select {
   border: none;
   padding: 5px;
   border-radius: 5px;
+  user-select: text !important;
 }
 input[type='submit'],
-button {
-  background-color: #fff;
+button,
+a.button {
   border: none;
   border-radius: 5px;
   background-color: #0984e3;
   color: #fff;
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
   cursor: pointer;
   padding: 5px 10px;
 }
-button.gray {
-  background-color: #444;
+.gray {
+  background-color: #444 !important;
 }
 
 @keyframes twinkle {

@@ -20,5 +20,6 @@ export async function noise(input, filter) {
     values,
     minAmplitude: min(filteredOutputValues),
     maxAmplitude: max(filteredOutputValues),
+    filterInfo: {},
   }
 }

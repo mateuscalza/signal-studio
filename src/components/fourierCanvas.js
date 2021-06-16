@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary, secondary } from '../utils/colors'
 import fftAbsolute from '../utils/fftAbsolute'
+import mapRange from '../utils/mapRange'
 import padding from '../utils/padding'
 
 const Wrapper = styled.section`
@@ -18,6 +19,7 @@ const Wrapper = styled.section`
 
 export default function FourierCanvas({ input, output }) {
   const [wrapperRef, { width, height }] = useMeasure()
+  const [cursor, setCursor] = useState([null, null])
 
   const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
@@ -49,7 +51,10 @@ export default function FourierCanvas({ input, output }) {
       const y = Math.floor(
         (1 - inputFFT[frequency] / maxInputFFT) * canvasHeight
       )
-      context[frequency === 0 ? 'moveTo' : 'lineTo'](frequency, y)
+      context[frequency === 0 ? 'moveTo' : 'lineTo'](
+        mapRange(frequency, 0, inputFFT.length, 0, minCanvasWidth),
+        y
+      )
     }
     context.stroke()
 
@@ -60,22 +65,49 @@ export default function FourierCanvas({ input, output }) {
       const y = Math.floor(
         (1 - outputFFT[frequency] / maxOutputFFT) * canvasHeight
       )
-      context[frequency === 0 ? 'moveTo' : 'lineTo'](frequency, y)
+      context[frequency === 0 ? 'moveTo' : 'lineTo'](
+        mapRange(frequency, 0, inputFFT.length, 0, minCanvasWidth),
+        y
+      )
     }
     context.stroke()
   }, [canvasRef, minCanvasWidth, canvasHeight, inputFFT, outputFFT])
 
+  const handleMouseMove = useCallback(
+    (event) => {
+      if (!inputFFT.length) {
+        return
+      }
+
+      const frequency = Math.floor(
+        mapRange(
+          event.nativeEvent.offsetX,
+          0,
+          minCanvasWidth,
+          0,
+          inputFFT.length
+        )
+      )
+      console.log(frequency)
+      setCursor([frequency, inputFFT[frequency], outputFFT[frequency] ?? null])
+    },
+    [inputFFT, outputFFT, minCanvasWidth]
+  )
+
   return (
     <Wrapper ref={wrapperRef}>
       <h2>FFT</h2>
+      {cursor[0] !== null && cursor[1] !== null && cursor[2] !== null ? (
+        <span className='cursor'>
+          Input {cursor[1].toFixed(3)}, output {cursor[2].toFixed(3)} at{' '}
+          {cursor[0]}Hz
+        </span>
+      ) : null}
       <canvas
         ref={canvasRef}
-        width={Math.max(
-          input.values.length,
-          output.values.length,
-          minCanvasWidth
-        )}
+        width={minCanvasWidth}
         height={canvasHeight}
+        onMouseMove={handleMouseMove}
       />
     </Wrapper>
   )

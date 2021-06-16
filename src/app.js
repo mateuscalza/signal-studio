@@ -9,8 +9,9 @@ import OutputCanvas from './components/outputCanvas'
 import AddFilter from './filters/addFilter'
 import useFilters from './filters/filters'
 import FiltersControls from './filters/filtersControls'
-import regression from 'regression'
-window.r = regression
+import Download from './components/download'
+import InputActions from './components/inputActions'
+
 const Wrapper = styled.div`
   flex: 1;
 `
@@ -25,12 +26,12 @@ export default function App() {
     originalMaxAmplitude: 1,
     interval: 1 / 1000,
     initialTime: 0,
+    filterInfo: {},
   })
   const [droppedFile, setDroppedFile] = useState(null)
   const [isAddingFilter, setIsAddingFilter] = useState(false)
   const [filters, setFilters] = useState([])
-
-  const output = useFilters(input, filters)
+  const [output, filtersInfo] = useFilters(input, filters)
   const { getRootProps, isDragActive } = useDropzone({
     onDrop: useCallback(([file]) => setDroppedFile(file), [setDroppedFile]),
   })
@@ -40,20 +41,23 @@ export default function App() {
       {...getRootProps()}
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
+      <InputActions onChange={setInput} onChangeDroppedFile={setDroppedFile} />
       <InputCanvas input={input} onChange={setInput} />
       <FiltersControls
         input={input}
         filters={filters}
+        filtersInfo={filtersInfo}
         onChange={setFilters}
         onAddFilter={() => setIsAddingFilter(true)}
       />
       <FourierCanvas input={input} output={output} />
       <OutputCanvas output={output} />
+      <Download output={output} />
 
       <Modal
         isVisible={Boolean(droppedFile)}
         onClose={() => setDroppedFile(false)}
-        height={450}
+        height={500}
       >
         {droppedFile ? (
           <CsvParser
@@ -66,7 +70,7 @@ export default function App() {
       <Modal
         isVisible={isAddingFilter}
         onClose={() => setIsAddingFilter(false)}
-        height={400}
+        height={250}
       >
         <AddFilter
           onChange={setFilters}

@@ -36,5 +36,11 @@ export async function fftBandstop(input, filter) {
     values: immutableReverseResult,
     minAmplitude: min(immutableReverseResult),
     maxAmplitude: max(immutableReverseResult),
+    filterInfo: {
+      newReal,
+      newImaginary,
+      real,
+      imaginary,
+    },
   }
 }

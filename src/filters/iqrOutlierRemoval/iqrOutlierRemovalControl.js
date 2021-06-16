@@ -10,7 +10,8 @@ export default function IqrOutlierRemovalControl({
     <>
       <div className='settings'>
         <h2>IQR Outlier Removal</h2>
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>{buttons}</div>
       </div>
       <div className='range' />
     </>

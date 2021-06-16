@@ -7,6 +7,7 @@ export default function FirBandstopControl({
   filter,
   onChange,
   buttons,
+  filterInfo,
 }) {
   const min = 1
   const max =
@@ -56,7 +57,21 @@ export default function FirBandstopControl({
             step={2}
           />
         </label>
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>
+          {filterInfo.firFilterCoefficients?.length ? (
+            <a
+              className='button gray'
+              href={`data:text/json;charset=utf-8,${escape(
+                JSON.stringify(filterInfo.firFilterCoefficients)
+              )}`}
+              download='coefficients.json'
+            >
+              Coefficients
+            </a>
+          ) : null}
+          {buttons}
+        </div>
       </div>
       <div className='range'>
         {max ? (

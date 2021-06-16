@@ -44,15 +44,8 @@ export default function FftBandstopControl({
             step={1}
           />
         </label>
-        {/* <label>
-        Order
-        <input
-          type='number'
-          value={filter.order}
-          onChange={(event) => onChange({ order: event.target.value })}
-        />
-      </label> */}
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>{buttons}</div>
       </div>
       <div className='range'>
         {max ? (

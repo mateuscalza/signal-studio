@@ -22,6 +22,7 @@ export default function InputCanvas({ input, onChange }) {
   const [wrapperRef, { width, height }] = useMeasure()
   const canvasRef = useRef(null)
   const [points, setPoints] = useState([])
+  const [cursor, setCursor] = useState([null, null])
 
   const minCanvasWidth = width - padding.left - padding.right
   const canvasHeight = height - padding.top - padding.bottom
@@ -53,6 +54,18 @@ export default function InputCanvas({ input, onChange }) {
 
     let hasStarted = false
     let last = undefined
+
+    context.beginPath()
+    context.moveTo(
+      0,
+      mapRange(0, input.minAmplitude, input.maxAmplitude, canvasHeight, 0)
+    )
+    context.lineTo(
+      canvas.width,
+      mapRange(0, input.minAmplitude, input.maxAmplitude, canvasHeight, 0)
+    )
+    context.strokeStyle = 'rgba(255,255,255,0.1)'
+    context.stroke()
 
     context.beginPath()
     for (let x = 0; x < points.length; x++) {
@@ -116,17 +129,27 @@ export default function InputCanvas({ input, onChange }) {
   )
   const handleMouseMove = useCallback(
     (event) => {
+      setCursor([
+        event.nativeEvent.offsetX * input.interval + input.initialTime,
+        input.values[event.nativeEvent.offsetX] ?? null,
+      ])
+
       if (event.buttons !== 1) {
         return
       }
       handleClick(event)
     },
-    [handleClick]
+    [handleClick, input.values, input.interval, input.initialTime]
   )
 
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Input</h2>
+      {cursor[1] !== null ? (
+        <span className='cursor'>
+          {cursor[1].toFixed(3)} at {cursor[0].toFixed(3)}s
+        </span>
+      ) : null}
       <canvas
         ref={canvasRef}
         width={Math.max(points.length, minCanvasWidth)}

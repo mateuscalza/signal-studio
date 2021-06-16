@@ -34,5 +34,6 @@ export async function iirBandstop(input, filter) {
     values,
     minAmplitude: min(values),
     maxAmplitude: max(values),
+    filterInfo: { iirFilterCoefficients },
   }
 }

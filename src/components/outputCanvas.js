@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary } from '../utils/colors'
@@ -18,6 +18,7 @@ const Wrapper = styled.section`
 
 export default function OutputCanvas({ output }) {
   const [wrapperRef, { width, height }] = useMeasure()
+  const [cursor, setCursor] = useState([null, null])
   const canvasRef = useRef(null)
 
   const minCanvasWidth = width - padding.left - padding.right
@@ -40,6 +41,18 @@ export default function OutputCanvas({ output }) {
 
     let hasStarted = false
     let last = undefined
+
+    context.beginPath()
+    context.moveTo(
+      0,
+      mapRange(0, output.minAmplitude, output.maxAmplitude, canvasHeight, 0)
+    )
+    context.lineTo(
+      canvas.width,
+      mapRange(0, output.minAmplitude, output.maxAmplitude, canvasHeight, 0)
+    )
+    context.strokeStyle = 'rgba(255,255,255,0.1)'
+    context.stroke()
 
     context.beginPath()
     for (let x = 0; x < values.length; x++) {
@@ -74,13 +87,29 @@ export default function OutputCanvas({ output }) {
     output.originalMaxAmplitude,
   ])
 
+  const handleMouseMove = useCallback(
+    (event) => {
+      setCursor([
+        event.nativeEvent.offsetX * output.interval + output.initialTime,
+        output.values[event.nativeEvent.offsetX] ?? null,
+      ])
+    },
+    [output.values, output.interval, output.initialTime]
+  )
+
   return (
     <Wrapper ref={wrapperRef}>
       <h2>Output</h2>
+      {cursor[1] !== null ? (
+        <span className='cursor'>
+          {cursor[1].toFixed(3)} at {cursor[0].toFixed(3)}s
+        </span>
+      ) : null}
       <canvas
         ref={canvasRef}
         width={Math.max((output.values || []).length, minCanvasWidth)}
         height={canvasHeight}
+        onMouseMove={handleMouseMove}
       />
     </Wrapper>
   )

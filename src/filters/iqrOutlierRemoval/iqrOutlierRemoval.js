@@ -1,4 +1,4 @@
-import { max, median, min } from 'mathjs'
+import { max, min } from 'mathjs'
 import outliers from 'outliers'
 import isNumber from '../../utils/isNumber'
 
@@ -9,12 +9,16 @@ export async function iqrOutlierRemoval(input, filter) {
   }
 
   console.time('iqr')
-  const currentNonCausalOutliers = outliers(input.values)
-  const currentNonCausalMedian = median(filteredInputValues)
+  let currentOutliers = outliers(input.values)
+  const causal = false
   const values = input.values.reduce((result, value, index, list) => {
-    result[index] = currentNonCausalOutliers.includes(value)
+    if (causal) {
+      currentOutliers = outliers(input.values.slice(0, index + 1))
+    }
+
+    result[index] = currentOutliers.includes(value)
       ? index === 0
-        ? currentNonCausalMedian
+        ? value
         : result[index - 1]
       : value
     return result
@@ -27,5 +31,6 @@ export async function iqrOutlierRemoval(input, filter) {
     values,
     minAmplitude: min(filteredOutputValues),
     maxAmplitude: max(filteredOutputValues),
+    filterInfo: {},
   }
 }

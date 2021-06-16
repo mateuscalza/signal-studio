@@ -7,6 +7,7 @@ export default function IirBandstopControl({
   filter,
   onChange,
   buttons,
+  filterInfo,
 }) {
   const min = 0
   const max =
@@ -54,9 +55,24 @@ export default function IirBandstopControl({
             }
             min={1}
             step={1}
+            max={12}
           />
         </label>
-        {buttons}
+        <div className='space' />
+        <div className='buttons'>
+          {filterInfo.iirFilterCoefficients?.length ? (
+            <a
+              className='button gray'
+              href={`data:text/json;charset=utf-8,${escape(
+                JSON.stringify(filterInfo.iirFilterCoefficients[0])
+              )}`}
+              download='coefficients.json'
+            >
+              Coefficients
+            </a>
+          ) : null}
+          {buttons}
+        </div>
       </div>
       <div className='range'>
         {max ? (
