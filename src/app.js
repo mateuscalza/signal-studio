@@ -8,6 +8,7 @@ import Modal from './components/modal'
 import CsvParser from './components/csvParser'
 import useFilters from './filters/filters'
 import FiltersControls from './filters/filtersControls'
+import AddFilter from './filters/addFilter'
 
 const Wrapper = styled.div`
   flex: 1;
@@ -23,14 +24,8 @@ export default function App() {
     initialTime: 0,
   })
   const [droppedFile, setDroppedFile] = useState(null)
-  const [filters, setFilters] = useState([
-    {
-      id: 'a',
-      type: 'fft-bandstop',
-      stopStart: 60,
-      stopEnd: 60,
-    },
-  ])
+  const [isAddingFilter, setIsAddingFilter] = useState(false)
+  const [filters, setFilters] = useState([])
 
   const output = useFilters(input, filters)
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -43,7 +38,12 @@ export default function App() {
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
       <InputCanvas input={input} onChange={setInput} />
-      <FiltersControls input={input} filters={filters} onChange={setFilters} />
+      <FiltersControls
+        input={input}
+        filters={filters}
+        onChange={setFilters}
+        onAddFilter={() => setIsAddingFilter(true)}
+      />
       <FourierCanvas input={input} output={output} />
       <OutputCanvas output={output} />
       <Modal
@@ -57,6 +57,16 @@ export default function App() {
             onEnd={() => setDroppedFile(false)}
           />
         ) : null}
+      </Modal>
+
+      <Modal
+        isVisible={isAddingFilter}
+        onClose={() => setIsAddingFilter(false)}
+      >
+        <AddFilter
+          onChange={setFilters}
+          onEnd={() => setIsAddingFilter(false)}
+        />
       </Modal>
     </Wrapper>
   )

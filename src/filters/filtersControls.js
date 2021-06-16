@@ -14,7 +14,12 @@ const Wrapper = styled.div`
   }
 `
 
-export default function FiltersControls({ input, filters, onChange }) {
+export default function FiltersControls({
+  input,
+  filters,
+  onAddFilter,
+  onChange,
+}) {
   return (
     <Wrapper>
       <ReactSortable list={filters} setList={onChange} className='sortable'>
@@ -38,7 +43,14 @@ export default function FiltersControls({ input, filters, onChange }) {
           />
         ))}
       </ReactSortable>
-      <button>Add filter</button>
+      <button
+        onClick={(event) => {
+          event.preventDefault()
+          onAddFilter()
+        }}
+      >
+        Add filter
+      </button>
     </Wrapper>
   )
 }
