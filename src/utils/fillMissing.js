@@ -1,6 +1,6 @@
 export default function fillMissing(array1D) {
   let hasStarted = false
-  let last = undefined
+  let last = 0
 
   const newArray1D = []
 

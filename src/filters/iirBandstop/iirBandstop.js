@@ -13,10 +13,9 @@ export async function iirBandstop(input, filter) {
     return input
   }
 
-  console.time('fir')
+  console.time('iir')
   const iirCalculator = new CalcCascades()
   const Fs = 1 / input.interval
-  console.log('Fs', Fs)
   const center = (filter.stopStart + filter.stopEnd) / 2
   const width = filter.stopEnd - filter.stopStart + 1
   const iirFilterCoefficients = iirCalculator.bandstop({
@@ -26,10 +25,9 @@ export async function iirBandstop(input, filter) {
     Fc: center,
     BW: width,
   })
-  console.log('firFilterCoefficients', iirFilterCoefficients)
   const iirFilter = new IirFilter(iirFilterCoefficients)
   const values = iirFilter.multiStep(input.values)
-  console.timeEnd('fir')
+  console.timeEnd('iir')
 
   return {
     ...input,

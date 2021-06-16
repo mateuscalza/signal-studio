@@ -53,8 +53,8 @@ export default function OutputCanvas({ output }) {
 
       const mappedY = mapRange(
         y,
-        output.minAmplitude,
-        output.maxAmplitude,
+        Math.min(output.minAmplitude, output.originalMinAmplitude),
+        Math.max(output.maxAmplitude, output.originalMaxAmplitude),
         canvasHeight,
         0
       )
@@ -70,6 +70,8 @@ export default function OutputCanvas({ output }) {
     output.values,
     output.minAmplitude,
     output.maxAmplitude,
+    output.originalMinAmplitude,
+    output.originalMaxAmplitude,
   ])
 
   return (

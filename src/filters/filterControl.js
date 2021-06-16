@@ -4,6 +4,7 @@ import padding from '../utils/padding'
 import FftBandstopControl from './fftBandstop/fftBandstopControl'
 import FirBandstopControl from './firBandstop/firBandstopControl'
 import IirBandstopControl from './iirBandstop/iirBandstopControl'
+import IqrOutlierRemovalControl from './iqrOutlierRemoval/iqrOutlierRemovalControl'
 
 const Wrapper = styled.div`
   display: flex;
@@ -78,6 +79,16 @@ export default function FilterControl({ input, filter, onChange }) {
       return (
         <Wrapper>
           <IirBandstopControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+          />
+        </Wrapper>
+      )
+    case 'iqr-outlier-removal':
+      return (
+        <Wrapper>
+          <IqrOutlierRemovalControl
             input={input}
             filter={filter}
             onChange={onChange}

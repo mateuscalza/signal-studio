@@ -5,11 +5,13 @@ import { useEffect, useState } from 'react'
 import fftBandstopWorker from 'workerize-loader!./fftBandstop/fftBandstop'
 import firBandstopWorker from 'workerize-loader!./firBandstop/firBandstop'
 import iirBandstopWorker from 'workerize-loader!./iirBandstop/iirBandstop'
+import iqrOutlierRemovalWorker from 'workerize-loader!./iqrOutlierRemoval/iqrOutlierRemoval'
 
 let workerResult
 let fftBandstopWorkerInstance
 let firBandstopWorkerInstance
 let iirBandstopWorkerInstance
+let iqrOutlierRemovalWorkerInstance
 
 export async function applyFilter(input, filter, controller) {
   switch (filter.type) {
@@ -49,6 +51,22 @@ export async function applyFilter(input, filter, controller) {
       workerResult = await iirBandstopWorkerInstance.iirBandstop(input, filter)
       console.timeEnd('worker')
       return workerResult
+    case 'iqr-outlier-removal':
+      console.time('worker')
+      if (!iqrOutlierRemovalWorkerInstance) {
+        iqrOutlierRemovalWorkerInstance = iqrOutlierRemovalWorker()
+      }
+      controller.abort = () => {
+        iqrOutlierRemovalWorkerInstance?.terminate()
+        iqrOutlierRemovalWorkerInstance = undefined
+      }
+      workerResult = await iqrOutlierRemovalWorkerInstance.iqrOutlierRemoval(
+        input,
+        filter
+      )
+      console.timeEnd('worker')
+      return workerResult
+
     default:
       throw new Error('Unknown filter')
   }
@@ -68,7 +86,13 @@ export default function useFilters(input, filters) {
         applyFilter(currentInput, currentFilter, controller),
       input
     )
-      .catch((error) => alert(error.message))
+      .catch((error) => {
+        alert(error.message)
+        return {
+          ...input,
+          values: [],
+        }
+      })
       .then(setResult)
 
     return () => controller.abort()
