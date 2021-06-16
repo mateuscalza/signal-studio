@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function NoiseControl({ input, filter, onChange }) {
+export default function NoiseControl({ input, filter, onChange, buttons }) {
   return (
     <>
       <div className='settings'>
@@ -18,6 +18,7 @@ export default function NoiseControl({ input, filter, onChange }) {
             max={5}
           />
         </label>
+        {buttons}
       </div>
       <div className='range' />
     </>

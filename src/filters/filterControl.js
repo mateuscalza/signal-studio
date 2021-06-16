@@ -56,7 +56,17 @@ const Wrapper = styled.div`
   }
 `
 
-export default function FilterControl({ input, filter, onChange }) {
+export default function FilterControl({ input, filter, onChange, onRemove }) {
+  const buttons = (
+    <>
+      <div className='space' />
+      <div className='buttons'>
+        <button onClick={onRemove} className='gray'>
+          Remove
+        </button>
+      </div>
+    </>
+  )
   switch (filter.type) {
     case 'fft-bandstop':
       return (
@@ -65,6 +75,7 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
@@ -75,6 +86,7 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
@@ -85,6 +97,7 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
@@ -95,6 +108,7 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
@@ -105,6 +119,7 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
@@ -115,13 +130,19 @@ export default function FilterControl({ input, filter, onChange }) {
             input={input}
             filter={filter}
             onChange={onChange}
+            buttons={buttons}
           />
         </Wrapper>
       )
     case 'noise':
       return (
         <Wrapper>
-          <NoiseControl input={input} filter={filter} onChange={onChange} />
+          <NoiseControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+            buttons={buttons}
+          />
         </Wrapper>
       )
     default:

@@ -2,7 +2,12 @@ import { Slider } from '@material-ui/core'
 import React from 'react'
 import findRadix from '../../utils/findRadix'
 
-export default function FftBandstopControl({ input, filter, onChange }) {
+export default function FftBandstopControl({
+  input,
+  filter,
+  onChange,
+  buttons,
+}) {
   const min = 1
   const max =
     input.values && input.values.length
@@ -47,6 +52,7 @@ export default function FftBandstopControl({ input, filter, onChange }) {
           onChange={(event) => onChange({ order: event.target.value })}
         />
       </label> */}
+        {buttons}
       </div>
       <div className='range'>
         {max ? (

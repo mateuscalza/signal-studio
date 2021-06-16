@@ -4,6 +4,7 @@ export default function PolynomialRegressionControl({
   input,
   filter,
   onChange,
+  buttons,
 }) {
   return (
     <>
@@ -22,6 +23,7 @@ export default function PolynomialRegressionControl({
             max={15}
           />
         </label>
+        {buttons}
       </div>
       <div className='range' />
     </>

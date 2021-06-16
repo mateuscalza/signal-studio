@@ -2,7 +2,12 @@ import { Slider } from '@material-ui/core'
 import React from 'react'
 import findRadix from '../../utils/findRadix'
 
-export default function IirBandstopControl({ input, filter, onChange }) {
+export default function IirBandstopControl({
+  input,
+  filter,
+  onChange,
+  buttons,
+}) {
   const min = 0
   const max =
     input.values && input.values.length
@@ -51,6 +56,7 @@ export default function IirBandstopControl({ input, filter, onChange }) {
             step={1}
           />
         </label>
+        {buttons}
       </div>
       <div className='range'>
         {max ? (

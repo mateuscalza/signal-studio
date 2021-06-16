@@ -9,11 +9,16 @@ export async function iqrOutlierRemoval(input, filter) {
   }
 
   console.time('iqr')
-  const currentOutliers = outliers(input.values)
-  const currentMedian = median(filteredInputValues)
-  const values = input.values.map((value, index, list) =>
-    currentOutliers.includes(value) ? currentMedian : value
-  )
+  const currentNonCausalOutliers = outliers(input.values)
+  const currentNonCausalMedian = median(filteredInputValues)
+  const values = input.values.reduce((result, value, index, list) => {
+    result[index] = currentNonCausalOutliers.includes(value)
+      ? index === 0
+        ? currentNonCausalMedian
+        : result[index - 1]
+      : value
+    return result
+  }, [])
   const filteredOutputValues = values.filter(isNumber)
   console.timeEnd('iqr')
 

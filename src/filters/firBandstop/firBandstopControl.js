@@ -2,7 +2,12 @@ import { Slider } from '@material-ui/core'
 import React from 'react'
 import findRadix from '../../utils/findRadix'
 
-export default function FirBandstopControl({ input, filter, onChange }) {
+export default function FirBandstopControl({
+  input,
+  filter,
+  onChange,
+  buttons,
+}) {
   const min = 1
   const max =
     input.values && input.values.length
@@ -51,6 +56,7 @@ export default function FirBandstopControl({ input, filter, onChange }) {
             step={2}
           />
         </label>
+        {buttons}
       </div>
       <div className='range'>
         {max ? (

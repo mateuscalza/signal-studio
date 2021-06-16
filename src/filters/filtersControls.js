@@ -40,6 +40,13 @@ export default function FiltersControls({
                 )
               )
             }
+            onRemove={() =>
+              onChange((old) =>
+                old.filter(
+                  (currentFilter, currentIndex) => currentIndex !== index
+                )
+              )
+            }
           />
         ))}
       </ReactSortable>
