@@ -2,9 +2,12 @@
 
 import pReduce from 'p-reduce'
 import { useEffect, useState } from 'react'
+import { useThrottle } from 'react-use'
 import { applyFilter } from './applyFilter'
 
 export default function useFilters(input, filters) {
+  const throttledInput = useThrottle(input, 300)
+  const throttledFilters = useThrottle(filters, 300)
   const [result, setResult] = useState(input)
 
   useEffect(() => {
@@ -13,22 +16,22 @@ export default function useFilters(input, filters) {
     }
 
     pReduce(
-      filters,
+      throttledFilters,
       (currentInput, currentFilter) =>
         applyFilter(currentInput, currentFilter, controller),
-      input
+      throttledInput
     )
       .catch((error) => {
         alert(error.message)
         return {
-          ...input,
+          ...throttledInput,
           values: [],
         }
       })
       .then(setResult)
 
     return () => controller.abort()
-  }, [input, filters])
+  }, [throttledInput, throttledFilters])
 
   return result
 }

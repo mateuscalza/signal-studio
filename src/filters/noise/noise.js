@@ -1,18 +1,16 @@
-import { max, median, min } from 'mathjs'
-import outliers from 'outliers'
+import { max, mean, min } from 'mathjs'
 import isNumber from '../../utils/isNumber'
 
-export async function iqrOutlierRemoval(input, filter) {
+export async function noise(input, filter) {
   const filteredInputValues = input.values.filter(isNumber)
   if (!filteredInputValues.length) {
     return input
   }
 
   console.time('iqr')
-  const currentOutliers = outliers(input.values)
-  const currentMedian = median(filteredInputValues)
-  const values = input.values.map((value, index, list) =>
-    currentOutliers.includes(value) ? currentMedian : value
+  const currentScaledMean = mean(filteredInputValues) * filter.scale
+  const values = input.values.map(
+    (value, index) => (Math.random() - 0.5) * currentScaledMean + value
   )
   const filteredOutputValues = values.filter(isNumber)
   console.timeEnd('iqr')

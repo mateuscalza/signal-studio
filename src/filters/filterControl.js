@@ -5,6 +5,9 @@ import FftBandstopControl from './fftBandstop/fftBandstopControl'
 import FirBandstopControl from './firBandstop/firBandstopControl'
 import IirBandstopControl from './iirBandstop/iirBandstopControl'
 import IqrOutlierRemovalControl from './iqrOutlierRemoval/iqrOutlierRemovalControl'
+import LinearRegressionControl from './linearRegression/linearRegressionControl'
+import NoiseControl from './noise/noiseControl'
+import PolynomialRegressionControl from './polynomialRegression/polynomialRegressionControl'
 
 const Wrapper = styled.div`
   display: flex;
@@ -93,6 +96,32 @@ export default function FilterControl({ input, filter, onChange }) {
             filter={filter}
             onChange={onChange}
           />
+        </Wrapper>
+      )
+    case 'linear-regression':
+      return (
+        <Wrapper>
+          <LinearRegressionControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+          />
+        </Wrapper>
+      )
+    case 'polynomial-regression':
+      return (
+        <Wrapper>
+          <PolynomialRegressionControl
+            input={input}
+            filter={filter}
+            onChange={onChange}
+          />
+        </Wrapper>
+      )
+    case 'noise':
+      return (
+        <Wrapper>
+          <NoiseControl input={input} filter={filter} onChange={onChange} />
         </Wrapper>
       )
     default:

@@ -47,7 +47,7 @@ export default function FirBandstopControl({ input, filter, onChange }) {
             onChange={(event) =>
               onChange({ order: Number(event.target.value) })
             }
-            min={1}
+            min={0}
             step={2}
           />
         </label>

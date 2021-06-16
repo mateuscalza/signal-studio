@@ -9,7 +9,8 @@ import OutputCanvas from './components/outputCanvas'
 import AddFilter from './filters/addFilter'
 import useFilters from './filters/filters'
 import FiltersControls from './filters/filtersControls'
-
+import regression from 'regression'
+window.r = regression
 const Wrapper = styled.div`
   flex: 1;
 `
@@ -48,9 +49,11 @@ export default function App() {
       />
       <FourierCanvas input={input} output={output} />
       <OutputCanvas output={output} />
+
       <Modal
         isVisible={Boolean(droppedFile)}
         onClose={() => setDroppedFile(false)}
+        height={450}
       >
         {droppedFile ? (
           <CsvParser
@@ -60,10 +63,10 @@ export default function App() {
           />
         ) : null}
       </Modal>
-
       <Modal
         isVisible={isAddingFilter}
         onClose={() => setIsAddingFilter(false)}
+        height={400}
       >
         <AddFilter
           onChange={setFilters}
