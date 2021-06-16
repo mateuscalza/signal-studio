@@ -31,7 +31,12 @@ export default function OutputCanvas({ output }) {
     }
 
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, minCanvasWidth, canvasHeight)
+    context.clearRect(
+      0,
+      0,
+      Math.max(minCanvasWidth, values.length),
+      canvasHeight
+    )
 
     let hasStarted = false
     let last = undefined

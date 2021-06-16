@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   }
 `
 
-export default function FiltersControls({ filters, onChange }) {
+export default function FiltersControls({ input, filters, onChange }) {
   return (
     <Wrapper>
       <ReactSortable list={filters} setList={onChange} className='sortable'>
@@ -22,6 +22,7 @@ export default function FiltersControls({ filters, onChange }) {
           <FilterControl
             key={filter.id}
             filter={filter}
+            input={input}
             onChange={(filterUpdate) =>
               onChange((old) =>
                 old.map((currentFilter, currentIndex) =>

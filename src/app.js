@@ -43,7 +43,7 @@ export default function App() {
       className={isDragActive ? 'is-loading is-grabbing' : ''}
     >
       <InputCanvas input={input} onChange={setInput} />
-      <FiltersControls filters={filters} onChange={setFilters} />
+      <FiltersControls input={input} filters={filters} onChange={setFilters} />
       <FourierCanvas input={input} output={output} />
       <OutputCanvas output={output} />
       <Modal
