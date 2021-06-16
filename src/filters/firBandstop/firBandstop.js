@@ -16,14 +16,12 @@ export async function firBandstop(input, filter) {
   console.time('fir')
   const firCalculator = new FirCoeffs()
   const Fs = 1 / input.interval
-  console.log('Fs', Fs)
   const firFilterCoefficients = firCalculator.bandstop({
     order: filter.order,
     Fs,
     F1: filter.stopStart,
     F2: filter.stopEnd,
   })
-  console.log('firFilterCoefficients', firFilterCoefficients)
   const firFilter = new FirFilter(firFilterCoefficients)
   const values = firFilter.multiStep(input.values)
   console.timeEnd('fir')
