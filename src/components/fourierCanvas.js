@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useAsync, useMeasure } from 'react-use'
+import React, { useEffect, useMemo, useRef } from 'react'
+import { useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary, secondary } from '../utils/colors'
 import fftAbsolute from '../utils/fftAbsolute'

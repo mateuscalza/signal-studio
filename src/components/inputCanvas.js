@@ -116,16 +116,12 @@ export default function InputCanvas({ input, onChange }) {
   )
   const handleMouseMove = useCallback(
     (event) => {
-      // setHoverPoint([
-      //   event.nativeEvent.offsetX,
-      //   canvasHeight - event.nativeEvent.offsetY,
-      // ])
       if (event.buttons !== 1) {
         return
       }
       handleClick(event)
     },
-    [handleClick, canvasHeight]
+    [handleClick]
   )
 
   return (

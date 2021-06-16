@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { useAsync, useMeasure } from 'react-use'
+import React, { useEffect, useRef } from 'react'
+import { useMeasure } from 'react-use'
 import styled from 'styled-components'
 import { primary } from '../utils/colors'
 import mapRange from '../utils/mapRange'

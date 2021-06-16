@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ReactSortable } from 'react-sortablejs'
 import styled from 'styled-components'
 import FilterControl from './filterControl'

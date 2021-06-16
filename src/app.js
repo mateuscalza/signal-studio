@@ -1,14 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import InputCanvas from './components/inputCanvas'
-import FourierCanvas from './components/fourierCanvas'
-import OutputCanvas from './components/outputCanvas'
-import Modal from './components/modal'
+import styled from 'styled-components'
 import CsvParser from './components/csvParser'
+import FourierCanvas from './components/fourierCanvas'
+import InputCanvas from './components/inputCanvas'
+import Modal from './components/modal'
+import OutputCanvas from './components/outputCanvas'
+import AddFilter from './filters/addFilter'
 import useFilters from './filters/filters'
 import FiltersControls from './filters/filtersControls'
-import AddFilter from './filters/addFilter'
 
 const Wrapper = styled.div`
   flex: 1;
@@ -30,7 +30,7 @@ export default function App() {
   const [filters, setFilters] = useState([])
 
   const output = useFilters(input, filters)
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     onDrop: useCallback(([file]) => setDroppedFile(file), [setDroppedFile]),
   })
 

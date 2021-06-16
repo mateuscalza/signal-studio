@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useDebounce, useLocalStorage } from 'react-use'
 import * as math from 'mathjs'
+import { useEffect, useMemo, useState } from 'react'
+import { useDebounce, useLocalStorage } from 'react-use'
 import { max, median, min } from 'simple-statistics'
 import { useFileContents } from '../hooks/fileContents'
 import fillMissing from '../utils/fillMissing'
+
+/* eslint-disable no-implied-eval */
 
 const maxSupportedFrequency = 1000000
 const minInterval = 1 / maxSupportedFrequency
@@ -100,7 +102,7 @@ export default function CsvParser({ file, onChangeInput, onEnd }) {
       )
       setInterval(String(normalizedInterval))
     } else {
-      setInterval('1')
+      setInterval(String(1))
     }
   }, [datasetMedianInterval])
 
