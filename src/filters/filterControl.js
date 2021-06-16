@@ -42,6 +42,11 @@ const Wrapper = styled.div`
 
   .range {
     min-height: 10px;
+
+    .MuiSlider-root {
+      padding: 13px 0 0;
+      margin-bottom: -5px;
+    }
   }
 `
 

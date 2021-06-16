@@ -27,8 +27,8 @@ export default function App() {
     {
       id: 'a',
       type: 'fft-bandstop',
-      stopStart: 5,
-      stopEnd: 15,
+      stopStart: 60,
+      stopEnd: 60,
     },
   ])
 
