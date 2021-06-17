@@ -1,6 +1,6 @@
 # Signal Studio
 
-Import, draw, process and analyse a signal.
+Import, draw, process and analyse a signal on browser.
 
 ## To do
 
