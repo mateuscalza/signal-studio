@@ -70,7 +70,7 @@ export default function App() {
       <Modal
         isVisible={isAddingFilter}
         onClose={() => setIsAddingFilter(false)}
-        height={250}
+        height={260}
       >
         <AddFilter
           onChange={setFilters}

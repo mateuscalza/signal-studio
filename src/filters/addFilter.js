@@ -10,6 +10,9 @@ const Wrapper = styled.div`
 
   button {
     margin-bottom: 10px;
+    small {
+      text-transform: lowercase;
+    }
   }
 `
 
@@ -36,27 +39,6 @@ export default function AddFilter({ onChange, onEnd }) {
         })}
       >
         FFT Bandstop
-      </button>
-      <button
-        onClick={handleAddFilter({
-          type: 'iir-bandstop',
-          order: 3,
-          characteristic: 'butterworth',
-          stopStart: 59,
-          stopEnd: 61,
-        })}
-      >
-        IIR Bandstop
-      </button>
-      <button
-        onClick={handleAddFilter({
-          type: 'fir-bandstop',
-          order: 6,
-          stopStart: 50,
-          stopEnd: 600,
-        })}
-      >
-        FIR Bandstop
       </button>
       <button
         onClick={handleAddFilter({
@@ -87,6 +69,31 @@ export default function AddFilter({ onChange, onEnd }) {
         })}
       >
         Polynomial Regression
+      </button>
+      <button
+        onClick={handleAddFilter({
+          type: 'iir-bandstop',
+          order: 3,
+          characteristic: 'butterworth',
+          stopStart: 59,
+          stopEnd: 61,
+        })}
+      >
+        IIR Bandstop
+        <br />
+        <small>(experimental)</small>
+      </button>
+      <button
+        onClick={handleAddFilter({
+          type: 'fir-bandstop',
+          order: 6,
+          stopStart: 50,
+          stopEnd: 600,
+        })}
+      >
+        FIR Bandstop
+        <br />
+        <small>(experimental)</small>
       </button>
     </Wrapper>
   )
